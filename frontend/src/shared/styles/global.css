@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@import "./theme.css";
+@import "./typography.css";
+@import "./animations.css";
+@import "./scrollbar.css";
+@import "./utilities.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
