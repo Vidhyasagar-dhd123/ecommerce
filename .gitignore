@@ -1,3 +1,10 @@
 .venv
 .env
-.backend/**/__pycache__/
+backend/**/__pycache__/
+docs/**/*
+guide.md
+help.md
+
+*/**/__pycache__/
+*.py[cod]
+*$py.class
