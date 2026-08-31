@@ -1,12 +1,12 @@
 from .audit import AuditModel
 from .soft_delete import SoftDeleteModel
-from .timestamp import TimesStampedModel
+from .timestamp import TimeStampedModel
 
 
 class BaseModel(
     AuditModel,
     SoftDeleteModel,
-    TimesStampedModel,
+    TimeStampedModel,
 ):
     class Meta:
         abstract = True

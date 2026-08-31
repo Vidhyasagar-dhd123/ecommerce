@@ -1,23 +1,32 @@
 """
 URL configuration for backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/auth/", include("users.urls")),  # Include the users app URLs
+    # Identity / User domain
+    path("api/v1/auth/", include("users.urls")),
+    path("api/auth/", include("users.urls")),  # backward-compatible alias
+    # Catalog domain
+    path("api/v1/products/", include("products.urls", namespace="products")),
+    # Commerce domain
+    path("api/v1/cart/", include("cart.urls", namespace="cart")),
+    path("api/v1/orders/", include("orders.urls", namespace="orders")),
+    # Fulfillment domain
+    path("api/v1/fulfillment/", include("fulfillment.urls", namespace="fulfillment")),
+    # Inventory domain
+    path("api/v1/inventory/", include("inventory.urls", namespace="inventory")),
+    # Vendors domain
+    path("api/v1/", include("vendors.urls", namespace="vendors")),
+    # Promotions & Offers domain
+    path("api/v1/promotions/", include("promotions.urls", namespace="promotions")),
+    # Reviews domain
+    path("api/v1/reviews/", include("reviews.urls", namespace="reviews")),
+    # Wishlist domain
+    path("api/v1/wishlist/", include("wishlist.urls", namespace="wishlist")),
+    # Finance domain
+    path("api/v1/finance/", include("finance.urls", namespace="finance")),
 ]

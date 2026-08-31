@@ -1,16 +1,14 @@
 from django.db import models
 
 
-class TimesStampedModel(models.Model):
+class TimeStampedModel(models.Model):
     """
-    Add automatic creation and modification timestamps
+    Add automatic creation and modification timestamps.
     """
 
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
-
-    updated_at = models.DateTimeField(
-        auto_now=True,
-    )
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
+        ordering = ["-created_at"]

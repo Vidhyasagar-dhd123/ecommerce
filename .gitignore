@@ -2,6 +2,7 @@
 .env
 backend/**/__pycache__/
 docs/**/*
+dev-guide/**/*
 guide.md
 help.md
 
