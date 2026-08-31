@@ -1,0 +1,31 @@
+[Customer Pages]
+    1. Axios Instance creation for seamless api calls.
+    2. Products page
+    3. Product details page
+    4. Cart page
+    5. Payment page (Checkout)
+    6. Order track page
+    7. Order details page
+    8. Order list page
+    9. History page (Payment + Order)
+    10. Invoice page
+    11. Exchange, Return & Refund page
+    12. Dues page
+    13. Promotions page
+    14. WishList
+    15. Profile page
+    16. Address Details page
+
+[Employee Pages]
+    1. Order List + Lock / Unlock management
+    2. Order Detail (warehouse-scoped view)
+    3. Shipment Dispatch + Mark Delivered
+    4. Inventory List + Stock Adjustment
+    5. Stock Transaction Audit Log
+    6. Return Approval / Rejection
+    7. Refund Processing
+    8. Warehouse Overview (stock health dashboard)
+    9. Vendor + Purchase Order List
+    10. Import Receive flow
+    11. Employee Profile page
+    12. Customer Dues Management (Support Agent)

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { getDashboardRoute } from '@/features/auth/utils/roleGuards';
 import { User, Lock, Eye, EyeClosed } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ import facebook from '@assets/images/facebook.png';
 import apple from '@assets/images/apple.png';
 
 export const Login = () => {
-    const { login, register, isLoading, isAuthenticated } = useAuth();
+    const { user, login, register, isLoading, isAuthenticated } = useAuth();
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,22 +25,30 @@ export const Login = () => {
     const [email, setEmail] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
-        return ()=>
-        {setEmail('');
-        setPassword('')
-        setUsername('')
-        setConfirmPassword('')}
-    },
-    [isLoginPage]);
+        if (isAuthenticated && !isLoading) {
+            navigate(getDashboardRoute(user), { replace: true });
+        }
+    }, [isAuthenticated, isLoading, user, navigate]);
+
+    useEffect(() => {
+        return () => {
+            setEmail('');
+            setPassword('');
+            setUsername('');
+            setConfirmPassword('');
+        };
+    }, [isLoginPage]);
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         setIsSubmitting(true);
-        const success = isLoginPage?await login(username, password):await register(username, email, password, confirmPassword);
+        const success = isLoginPage
+            ? await login(email, password)
+            : await register(username, email, password, confirmPassword);
         if (!success) {
             setError('Invalid username or password.');
         }
@@ -50,8 +59,8 @@ export const Login = () => {
         return <p>Loading...</p>;
     }
 
-    if (isAuthenticated) {;
-        navigate('/dashboard');
+    if (isAuthenticated) {
+        return null;
     }
 
     return (
@@ -157,27 +166,7 @@ export const Login = () => {
                     </p>
                 </div>
                 <form className="m-8 mb-4" onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label
-                            className="block mb-2 font-medium"
-                            htmlFor="username"
-                        >
-                            Username
-                        </label>
-                        <div className="flex items-center p-2 rounded-lg border-2 border-gray-200">
-                            <User className="text-gray-400" size={20} />
-                            <input
-                                className="pl-2 w-full border-none outline-none"
-                                type="text"
-                                id="username"
-                                placeholder="Enter your username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
-                    {!isLoginPage&&
+                    {/* Email — shown on both Login and Register */}
                     <div className="mb-4">
                         <label
                             className="block mb-2 font-medium"
@@ -194,6 +183,28 @@ export const Login = () => {
                                 placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* Username — only for registration */}
+                    {!isLoginPage && <div className="mb-4">
+                        <label
+                            className="block mb-2 font-medium"
+                            htmlFor="username"
+                        >
+                            Username
+                        </label>
+                        <div className="flex items-center p-2 rounded-lg border-2 border-gray-200">
+                            <User className="text-gray-400" size={20} />
+                            <input
+                                className="pl-2 w-full border-none outline-none"
+                                type="text"
+                                id="username"
+                                placeholder="Choose a username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                                 required
                             />
                         </div>
