@@ -1751,11 +1751,6 @@ select:focus {
   color: #ffffff !important;
 }
 
-/* Base shape — defined once, colors from theme tokens */
-.shopease-hub-icon {
-  /* already defined above as width/height/border-radius from hub CSS */
-}
-
 .shopease-hub-icon.users {
   background-color: var(--se-bg-users) !important;
   color: var(--se-users) !important;
