@@ -40,13 +40,15 @@ export const register = async (
 };
 
 export const refreshAccessToken = async (refresh: string): Promise<string> => {
-    const response = await axios.post<Envelope<{ access: string }>>(`${BASE_URL}/api/v1/auth/login/refresh/`, {
+    const response = await axios.post<Envelope<{ access: string; refresh?: string }>>(`${BASE_URL}/api/v1/auth/login/refresh/`, {
         refresh,
     });
     if (!response.data.success || !response.data.data) {
         throw new Error('Token refresh failed');
     }
-    return response.data.data.access;
+    const { access, refresh: newRefresh } = response.data.data;
+    tokenStorage.updateTokens(access, newRefresh);
+    return access;
 };
 
 export const logout = async (): Promise<void> => {
