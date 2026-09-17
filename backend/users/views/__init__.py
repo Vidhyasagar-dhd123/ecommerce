@@ -9,6 +9,7 @@ from .profile_views import (
     AdminUserDetailView,
     AdminCustomerListView,
     AdminEmployeeListView,
+    AdminStatsView,
 )
 from .address_views import AddressViewSet
 
@@ -25,4 +26,5 @@ __all__ = [
     "AdminUserDetailView",
     "AdminCustomerListView",
     "AdminEmployeeListView",
-]
+    "AdminStatsView",
+]

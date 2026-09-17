@@ -11,8 +11,28 @@ class ProductQuerySet(QuerySet):
             variants__stock__gt=0, variants__status=True, variants__is_deleted=False
         ).distinct()
 
-    def by_category(self, category_id):
-        return self.filter(category_id=category_id)
+    def by_category(self, category_identifier):
+        if not category_identifier:
+            return self
+
+        from products.models import Category
+        try:
+            if str(category_identifier).isdigit():
+                cat = Category.objects.get(pk=int(category_identifier))
+            else:
+                cat = Category.objects.get(slug=str(category_identifier))
+
+            category_ids = [cat.pk]
+
+            def collect_children(parent_cat):
+                for child in parent_cat.subcategories.filter(status=True, is_deleted=False):
+                    category_ids.append(child.pk)
+                    collect_children(child)
+
+            collect_children(cat)
+            return self.filter(category_id__in=category_ids)
+        except (Category.DoesNotExist, ValueError, TypeError):
+            return self.filter(category_id=category_identifier)
 
     def by_brand(self, brand_id):
         return self.filter(brand_id=brand_id)

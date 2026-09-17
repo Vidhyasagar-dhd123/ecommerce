@@ -1,0 +1,1842 @@
+/* ==========================================================================
+   ShopEase Modern E-Commerce Admin Operations Theme
+   Harmonious Adaptive Light & Dark Color System + Stable Grid Layouts
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Light Mode Token System ── */
+:root,
+[data-theme="light"] {
+  --primary: #2563eb;
+  --secondary: #1d4ed8;
+  --accent: #3b82f6;
+  --primary-fg: #ffffff;
+
+  --body-fg: #1e293b;
+  --body-bg: #f8fafc;
+  --body-quiet-color: #64748b;
+  --body-loud-color: #0f172a;
+
+  --header-bg: #ffffff;
+  --header-color: #0f172a;
+  --header-link-color: #1e293b;
+  --header-border: #e2e8f0;
+
+  --breadcrumbs-bg: #f8fafc;
+  --breadcrumbs-fg: #64748b;
+  --breadcrumbs-link-fg: #2563eb;
+  --breadcrumbs-border: #e2e8f0;
+
+  --link-fg: #2563eb;
+  --link-hover-color: #1d4ed8;
+  --link-selected-fg: #1d4ed8;
+
+  --hairline-color: #e2e8f0;
+  --border-color: #e2e8f0;
+
+  --darkened-bg: #f1f5f9;
+  --selected-bg: #eff6ff;
+  --selected-row: #eff6ff;
+
+  --button-fg: #ffffff;
+  --button-bg: #2563eb;
+  --button-hover-bg: #1d4ed8;
+
+  --default-button-bg: #2563eb;
+  --default-button-hover-bg: #1d4ed8;
+
+  --close-button-bg: #94a3b8;
+  --close-button-hover-bg: #64748b;
+
+  --delete-button-bg: #ef4444;
+  --delete-button-hover-bg: #dc2626;
+
+  --message-success-bg: #ecfdf5;
+  --message-success-border: #a7f3d0;
+  --message-success-fg: #065f46;
+
+  --message-warning-bg: #fffbeb;
+  --message-warning-border: #fde68a;
+  --message-warning-fg: #92400e;
+
+  --message-error-bg: #fef2f2;
+  --message-error-border: #fecaca;
+  --message-error-fg: #991b1b;
+
+  --error-fg: #ef4444;
+
+  /* ShopEase Specific Tokens (Light) */
+  --se-primary: #2563eb;
+  --se-primary-hover: #1d4ed8;
+  --se-primary-light: #eff6ff;
+  --se-primary-ring: rgba(37, 99, 235, 0.2);
+
+  --se-bg: #f8fafc;
+  --se-surface: #ffffff;
+  --se-surface-raised: #f1f5f9;
+  --se-surface-overlay: #ffffff;
+  --se-border: #e2e8f0;
+  --se-border-subtle: #f1f5f9;
+  --se-border-focus: #2563eb;
+
+  --se-text-main: #1e293b;
+  --se-text-muted: #64748b;
+  --se-text-light: #94a3b8;
+
+  --se-input-bg: #ffffff;
+  --se-input-border: #cbd5e1;
+  --se-input-text: #0f172a;
+
+  --se-card-bg: #ffffff;
+  --se-table-header-bg: #f8fafc;
+  --se-table-row-hover: #f8fafc;
+
+  --se-radius-sm: 6px;
+  --se-radius: 10px;
+  --se-radius-lg: 14px;
+  --se-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --se-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --se-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+
+  --se-users: #2563eb;
+  --se-catalogs: #c026d3;
+  --se-orders: #16a34a;
+  --se-logistics: #ea580c;
+  --se-inventory: #0891b2;
+  --se-vendors: #ca8a04;
+  --se-marketing: #e11d48;
+
+  --se-bg-users: #eff6ff;
+  --se-bg-catalogs: #fdf4ff;
+  --se-bg-orders: #f0fdf4;
+  --se-bg-logistics: #fff7ed;
+  --se-bg-inventory: #ecfeff;
+  --se-bg-vendors: #fefce8;
+  --se-bg-marketing: #fff1f2;
+}
+
+/* ── Dark Mode Token System ── */
+[data-theme="dark"] {
+  --primary: #3b82f6;
+  --secondary: #2563eb;
+  --accent: #60a5fa;
+  --primary-fg: #ffffff;
+
+  --body-fg: #f1f5f9;
+  --body-bg: #090d16;
+  --body-quiet-color: #94a3b8;
+  --body-loud-color: #ffffff;
+
+  --header-bg: #0f172a;
+  --header-color: #ffffff;
+  --header-link-color: #f1f5f9;
+  --header-border: #1e293b;
+
+  --breadcrumbs-bg: #0d1321;
+  --breadcrumbs-fg: #94a3b8;
+  --breadcrumbs-link-fg: #60a5fa;
+  --breadcrumbs-border: #1e293b;
+
+  --link-fg: #60a5fa;
+  --link-hover-color: #93c5fd;
+  --link-selected-fg: #93c5fd;
+
+  --hairline-color: #1e293b;
+  --border-color: #1e293b;
+
+  --darkened-bg: #1e293b;
+  --selected-bg: #1e293b;
+  --selected-row: #1e3a8a;
+
+  --button-fg: #ffffff;
+  --button-bg: #2563eb;
+  --button-hover-bg: #3b82f6;
+
+  --default-button-bg: #2563eb;
+  --default-button-hover-bg: #3b82f6;
+
+  --close-button-bg: #64748b;
+  --close-button-hover-bg: #94a3b8;
+
+  --delete-button-bg: #ef4444;
+  --delete-button-hover-bg: #dc2626;
+
+  --message-success-bg: #064e3b;
+  --message-success-border: #047857;
+  --message-success-fg: #a7f3d0;
+
+  --message-warning-bg: #78350f;
+  --message-warning-border: #b45309;
+  --message-warning-fg: #fde68a;
+
+  --message-error-bg: #7f1d1d;
+  --message-error-border: #b91c1c;
+  --message-error-fg: #fecaca;
+
+  --error-fg: #f87171;
+
+  /* ShopEase Specific Tokens (Dark) */
+  --se-primary: #3b82f6;
+  --se-primary-hover: #60a5fa;
+  --se-primary-light: #1e293b;
+  --se-primary-ring: rgba(59, 130, 246, 0.35);
+
+  --se-bg: #090d16;
+  --se-surface: #0f172a;
+  --se-surface-raised: #1e293b;
+  --se-surface-overlay: #1e293b;
+  --se-border: #334155;
+  --se-border-subtle: #1e293b;
+  --se-border-focus: #3b82f6;
+
+  --se-text-main: #f8fafc;
+  --se-text-muted: #94a3b8;
+  --se-text-light: #64748b;
+
+  --se-input-bg: #1e293b;
+  --se-input-border: #475569;
+  --se-input-text: #f8fafc;
+
+  --se-card-bg: #0f172a;
+  --se-table-header-bg: #1e293b;
+  --se-table-row-hover: #1e293b;
+
+  --se-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --se-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --se-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+
+  --se-users: #2563eb;
+  --se-catalogs: #c026d3;
+  --se-orders: #16a34a;
+  --se-logistics: #ea580c;
+  --se-inventory: #0891b2;
+  --se-vendors: #ca8a04;
+  --se-marketing: #e11d48;
+
+  /* background colors for dark mode hub icons — matches --se-bg-* light convention */
+  --se-bg-users: rgba(37, 99, 235, 0.2);
+  --se-bg-catalogs: rgba(192, 38, 211, 0.2);
+  --se-bg-orders: rgba(22, 163, 74, 0.2);
+  --se-bg-logistics: rgba(234, 88, 12, 0.2);
+  --se-bg-inventory: rgba(8, 145, 178, 0.2);
+  --se-bg-vendors: rgba(202, 138, 4, 0.2);
+  --se-bg-marketing: rgba(225, 29, 72, 0.2);
+}
+
+/* ── Global Typography & Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  background-color: var(--body-bg) !important;
+  color: var(--body-fg) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--link-fg);
+}
+
+a:hover {
+  color: var(--link-hover-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--body-loud-color) !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+/* ── Responsive Top Header & Branding ── */
+#header {
+  background: var(--header-bg) !important;
+  color: var(--header-color) !important;
+  padding: 0 24px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  border-bottom: 1px solid var(--header-border) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  gap: 12px !important;
+  height: 60px !important;
+  min-height: 60px !important;
+  box-sizing: border-box !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+#branding {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+  overflow: hidden !important;
+}
+
+.shopease-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shopease-logo-anchor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none !important;
+}
+
+.shopease-logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 8px;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+.shopease-brand-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--header-color) !important;
+  letter-spacing: -0.02em;
+}
+
+.shopease-badge-superuser {
+  display: inline-flex;
+  align-items: center;
+  background: var(--se-primary-light);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  color: var(--primary);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.shopease-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shopease-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--se-surface-raised);
+  color: var(--body-fg) !important;
+  text-decoration: none !important;
+  border: 1px solid var(--se-border);
+  transition: all 0.15s ease;
+}
+
+.shopease-nav-link:hover {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+}
+
+/* User Account & Theme Controls */
+.shopease-account-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.shopease-user-dropdown-container {
+  position: relative;
+}
+
+.shopease-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: var(--se-surface-raised);
+  border: 1px solid var(--se-border);
+  color: var(--body-loud-color) !important;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.shopease-user-btn:hover {
+  background: var(--se-border);
+}
+
+.shopease-user-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.shopease-user-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 200px;
+  background: var(--se-surface-overlay);
+  border: 1px solid var(--se-border);
+  border-radius: var(--se-radius);
+  box-shadow: var(--se-shadow-lg);
+  padding: 6px;
+  z-index: 100;
+}
+
+.shopease-user-menu.open {
+  display: block;
+}
+
+.shopease-user-menu-header {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.shopease-user-menu-header strong {
+  font-size: 13px;
+  color: var(--body-loud-color);
+}
+
+.shopease-user-menu-header .shopease-meta-text {
+  font-size: 11.5px;
+  color: var(--body-quiet-color);
+}
+
+.shopease-user-menu-divider {
+  height: 1px;
+  background: var(--se-border);
+  margin: 4px 0;
+}
+
+.shopease-user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--body-fg) !important;
+  text-decoration: none !important;
+  background: transparent;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.shopease-user-menu-item:hover {
+  background: var(--se-surface-raised);
+  color: var(--link-fg) !important;
+}
+
+.shopease-logout-btn {
+  color: var(--error-fg) !important;
+  padding: 8px 10px !important;
+}
+
+.shopease-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.shopease-dashboard-hub{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.theme-toggle {
+  background: var(--se-surface-raised) !important;
+  border: 1px solid var(--se-border) !important;
+  color: var(--body-loud-color) !important;
+  border-radius: 8px !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+}
+
+.theme-toggle:hover {
+  background: var(--se-border) !important;
+}
+
+[data-theme="dark"] .theme-icon-dark {
+  display: none;
+}
+
+[data-theme="dark"] .theme-icon-light {
+  display: inline-flex;
+  color: #fbbf24;
+}
+
+[data-theme="light"] .theme-icon-light {
+  display: none;
+}
+
+[data-theme="light"] .theme-icon-dark {
+  display: inline-flex;
+  color: #475569;
+}
+
+/* ── Breadcrumbs ── */
+div.breadcrumbs {
+  background: var(--breadcrumbs-bg) !important;
+  border-bottom: 1px solid var(--breadcrumbs-border) !important;
+  padding: 10px 24px !important;
+  font-size: 13px !important;
+  color: var(--breadcrumbs-fg) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+div.breadcrumbs a {
+  color: var(--breadcrumbs-link-fg) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+}
+
+div.breadcrumbs a:hover {
+  text-decoration: underline !important;
+}
+
+/* ── Main Layout & Navigation Sidebar ── */
+#container {
+  min-width: 0 !important;
+  background: var(--body-bg) !important;
+}
+
+#nav-sidebar {
+  background: var(--se-surface) !important;
+  border-right: 1px solid var(--se-border) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: 250px !important;
+  flex-shrink: 0 !important;
+}
+
+.shopease-sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.shopease-sidebar-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--se-border);
+}
+
+.shopease-sidebar-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.shopease-sidebar-filter svg {
+  position: absolute;
+  left: 10px;
+  color: var(--body-quiet-color);
+  pointer-events: none;
+}
+
+.shopease-sidebar-filter input {
+  width: 100%;
+  padding: 7px 10px 7px 32px;
+  background: var(--se-input-bg);
+  border: 1px solid var(--se-input-border);
+  border-radius: var(--se-radius-sm);
+  color: var(--se-input-text);
+  font-size: 12.5px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.shopease-sidebar-filter input:focus {
+  border-color: var(--se-border-focus);
+}
+
+.shopease-sidebar-nav {
+  padding: 12px 10px;
+  overflow-y: auto;
+}
+
+.shopease-nav-section {
+  margin-bottom: 16px;
+}
+
+.shopease-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--body-quiet-color);
+}
+
+.shopease-section-links {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+}
+
+.shopease-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: var(--se-radius-sm);
+  color: var(--body-fg);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.shopease-nav-item:hover {
+  background: var(--se-surface-raised);
+  color: var(--link-fg);
+}
+
+.shopease-nav-item.current-model {
+  background: var(--se-primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.shopease-nav-item-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shopease-add-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--body-quiet-color);
+  padding: 2px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.shopease-add-link:hover {
+  color: var(--primary);
+  background: var(--se-primary-light);
+}
+
+/* ── Content Area & Page Header ── */
+#content {
+  padding: 24px !important;
+  background: var(--body-bg) !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  margin:auto;
+}
+
+#content-main {
+  width: 100% !important;
+}
+
+.shopease-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.shopease-page-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: var(--body-loud-color) !important;
+  margin: 0 !important;
+  letter-spacing: -0.02em;
+}
+
+.shopease-page-subtitle {
+  margin: 4px 0 0 0 !important;
+  font-size: 13.5px !important;
+  color: var(--body-quiet-color) !important;
+}
+
+.shopease-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shopease-btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 8px 18px !important;
+  border-radius: var(--se-radius-sm) !important;
+  text-decoration: none !important;
+  border: none !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  transition: all 0.15s ease !important;
+}
+
+.shopease-btn-primary:hover {
+  background: var(--secondary) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--se-shadow) !important;
+}
+
+.shopease-filter-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--se-surface);
+  color: var(--body-fg);
+  border: 1px solid var(--se-border);
+  border-radius: var(--se-radius-sm);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.shopease-filter-toggle-btn:hover,
+.shopease-filter-toggle-btn.active {
+  background: var(--se-surface-raised);
+  border-color: var(--se-border-focus);
+  color: var(--link-fg);
+}
+
+/* ── Alerts & Messages ── */
+.shopease-messages-container,
+ul.messagelist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 20px 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.shopease-alert,
+ul.messagelist li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: var(--se-radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--se-shadow-sm);
+  background: var(--message-success-bg);
+  border: 1px solid var(--message-success-border);
+  color: var(--message-success-fg);
+}
+
+ul.messagelist li.warning {
+  background: var(--message-warning-bg);
+  border-color: var(--message-warning-border);
+  color: var(--message-warning-fg);
+}
+
+ul.messagelist li.error {
+  background: var(--message-error-bg);
+  border-color: var(--message-error-border);
+  color: var(--message-error-fg);
+}
+
+/* ── Workspace & List Views ── */
+.shopease-workspace-wrapper {
+  position: relative;
+  display: flex;
+  gap: 20px;
+}
+
+.shopease-workspace-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Search Toolbar */
+.shopease-search-toolbar {
+  background: var(--se-surface);
+  border: 1px solid var(--se-border);
+  border-radius: var(--se-radius);
+  padding: 12px 16px;
+  box-shadow: var(--se-shadow-sm);
+}
+
+.shopease-search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.shopease-search-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.shopease-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--body-quiet-color);
+  pointer-events: none;
+}
+
+.shopease-search-input-wrapper input#searchbar {
+  width: 100% !important;
+  padding: 9px 36px 9px 38px !important;
+  background: var(--se-input-bg) !important;
+  color: var(--se-input-text) !important;
+  border: 1px solid var(--se-input-border) !important;
+  border-radius: var(--se-radius-sm) !important;
+  font-size: 13.5px !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.shopease-search-input-wrapper input#searchbar:focus {
+  border-color: var(--se-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--se-primary-ring) !important;
+  outline: none !important;
+}
+
+.shopease-search-clear {
+  position: absolute;
+  right: 12px;
+  color: var(--body-quiet-color);
+  display: inline-flex;
+  align-items: center;
+}
+
+.shopease-btn-search {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 9px 18px !important;
+  border-radius: var(--se-radius-sm) !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+}
+
+.shopease-btn-search:hover {
+  background: var(--secondary) !important;
+}
+
+/* Actions Bar */
+.actions {
+  background: var(--se-surface) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius-sm) !important;
+  padding: 10px 14px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  flex-wrap: wrap;
+}
+
+.actions label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--body-loud-color) !important;
+}
+
+.actions select {
+  background: var(--se-input-bg) !important;
+  color: var(--se-input-text) !important;
+  border: 1px solid var(--se-input-border) !important;
+  border-radius: var(--se-radius-sm) !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+}
+
+.actions .button {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  font-size: 12.5px !important;
+  padding: 6px 14px !important;
+  border-radius: var(--se-radius-sm) !important;
+}
+
+.shopease-selected-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--se-primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+/* ── Result List Table ── */
+.shopease-table-container,
+#changelist .results {
+  background: var(--se-surface);
+  border: 1px solid var(--se-border);
+  border-radius: var(--se-radius);
+  box-shadow: var(--se-shadow);
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+table#result_list {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  background: var(--se-surface) !important;
+  margin: 0 !important;
+}
+
+#result_list th {
+  background: var(--se-table-header-bg) !important;
+  color: var(--body-quiet-color) !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--se-border) !important;
+  border-top: none !important;
+  text-align: left !important;
+}
+
+#result_list th a {
+  color: var(--body-quiet-color) !important;
+  text-decoration: none !important;
+}
+
+#result_list th a:hover {
+  color: var(--link-fg) !important;
+}
+
+#result_list td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--hairline-color) !important;
+  vertical-align: middle !important;
+  font-size: 13.5px !important;
+  color: var(--body-fg) !important;
+}
+
+#result_list tbody tr:hover td {
+  background: var(--se-table-row-hover) !important;
+}
+
+#result_list tbody tr.selected td {
+  background: var(--selected-bg) !important;
+}
+
+/* Rich Identity & Thumbnails */
+.admin-cell-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-cell-identity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-product-link {
+  font-weight: 600 !important;
+  color: var(--body-loud-color) !important;
+  text-decoration: none !important;
+  font-size: 14px !important;
+}
+
+.admin-product-link:hover {
+  color: var(--link-fg) !important;
+  text-decoration: underline !important;
+}
+
+.admin-meta-text {
+  font-size: 12px;
+  color: var(--body-quiet-color);
+}
+
+.admin-thumb-img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: var(--se-radius-sm);
+  border: 1px solid var(--se-border);
+  background: var(--se-surface);
+  flex-shrink: 0;
+}
+
+.admin-thumb-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--se-radius-sm);
+  border: 1px solid var(--se-border);
+  background: var(--se-surface-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--body-quiet-color);
+  flex-shrink: 0;
+}
+
+/* Semantic Stock Pills */
+.stock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.stock-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.stock-healthy {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.stock-healthy .stock-dot {
+  background: #10b981;
+}
+
+.stock-low {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.stock-low .stock-dot {
+  background: #f59e0b;
+}
+
+.stock-out {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.stock-out .stock-dot {
+  background: #ef4444;
+}
+
+/* Badges */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.badge-success {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  color: #10b981 !important;
+}
+
+.badge-warning {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  color: #f59e0b !important;
+}
+
+.badge-danger {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+}
+
+.badge-info {
+  background-color: rgba(59, 130, 246, 0.12) !important;
+  color: #3b82f6 !important;
+}
+
+.badge-dark {
+  background-color: var(--se-surface-raised) !important;
+  color: var(--body-quiet-color) !important;
+  border: 1px solid var(--se-border) !important;
+}
+
+.badge-primary {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+/* ── Filter Drawer ── */
+.shopease-filter-drawer {
+  display: none;
+  width: 280px;
+  background: var(--se-surface);
+  border: 1px solid var(--se-border);
+  border-radius: var(--se-radius);
+  box-shadow: var(--se-shadow);
+  padding: 16px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.shopease-filter-drawer.open {
+  display: block;
+}
+
+.shopease-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--se-border);
+  margin-bottom: 16px;
+}
+
+.shopease-filter-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--body-loud-color);
+}
+
+.shopease-filter-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--body-quiet-color);
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.shopease-filter-close:hover {
+  color: var(--body-loud-color);
+  background: var(--se-surface-raised);
+}
+
+#changelist-filter h2 {
+  display: none;
+}
+
+#changelist-filter h3 {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--body-quiet-color) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin: 14px 0 8px 0 !important;
+}
+
+#changelist-filter ul {
+  padding-left: 0 !important;
+  list-style: none !important;
+  margin: 0 !important;
+}
+
+#changelist-filter li {
+  margin-bottom: 3px !important;
+}
+
+#changelist-filter li a {
+  display: block !important;
+  padding: 5px 8px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  color: var(--body-fg) !important;
+  text-decoration: none !important;
+  transition: background 0.15s ease !important;
+}
+
+#changelist-filter li a:hover {
+  background: var(--se-surface-raised) !important;
+  color: var(--link-fg) !important;
+}
+
+#changelist-filter li.selected a {
+  background: var(--se-primary-light) !important;
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+}
+
+/* ── Pagination ── */
+.shopease-pagination-bar,
+.paginator {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 16px !important;
+  background: var(--se-surface) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius) !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  color: var(--body-quiet-color) !important;
+}
+
+.shopease-pagination-info {
+  font-size: 13px;
+  color: var(--body-quiet-color);
+}
+
+.shopease-pagination-info strong {
+  color: var(--body-loud-color);
+}
+
+.shopease-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shopease-pagination-pages a,
+.shopease-pagination-pages span {
+  padding: 6px 12px;
+  border-radius: var(--se-radius-sm);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--body-fg);
+  border: 1px solid var(--se-border);
+  background: var(--se-surface);
+}
+
+.shopease-pagination-pages a:hover {
+  background: var(--se-surface-raised);
+  border-color: var(--se-border-focus);
+}
+
+.shopease-pagination-pages .this-page {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  font-weight: 700 !important;
+}
+
+/* ── Change Form & Fieldsets (Clean Color Application, Intact Layout) ── */
+.module {
+  background: var(--se-surface) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius) !important;
+  margin-bottom: 24px !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  box-sizing: border-box !important;
+}
+
+fieldset {
+  background: var(--se-surface) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius) !important;
+  margin-bottom: 24px !important;
+  padding: 0 !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+fieldset.module h2 {
+  background: var(--se-surface-raised) !important;
+  color: var(--body-loud-color) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid var(--se-border) !important;
+  margin: 0 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase;
+  border-radius: calc(var(--se-radius) - 1px) calc(var(--se-radius) - 1px) 0 0 !important;
+}
+
+fieldset.module > .form-row,
+fieldset > .form-row {
+  padding: 12px 18px !important;
+  box-sizing: border-box !important;
+}
+
+.form-row {
+  border-bottom: 1px solid var(--se-border-subtle) !important;
+  padding: 10px 0 !important;
+}
+
+.form-row:last-child {
+  border-bottom: none !important;
+}
+
+.aligned label {
+  color: var(--body-loud-color) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding-right: 12px;
+}
+
+/* Inputs & Form Controls */
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=url],
+input[type=number],
+input[type=tel],
+textarea,
+select {
+  background-color: var(--se-input-bg) !important;
+  color: var(--se-input-text) !important;
+  border: 1px solid var(--se-input-border) !important;
+  border-radius: var(--se-radius-sm) !important;
+  padding: 8px 12px !important;
+  font-size: 13.5px !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+
+input[type=text]:focus,
+input[type=password]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+input[type=number]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--se-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--se-primary-ring) !important;
+  outline: none !important;
+}
+
+.aligned .readonly {
+  color: var(--body-fg) !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.6 !important;
+}
+
+.admin-preview-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 12px 16px !important;
+  background: var(--se-surface-raised) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius) !important;
+  max-width: 650px !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  box-sizing: border-box !important;
+}
+
+.admin-preview-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--se-radius-sm);
+  border: 1px solid var(--se-border);
+  flex-shrink: 0;
+  background: var(--se-surface);
+}
+
+/* ── Inline Groups & Tabular Inlines ── */
+.inline-group {
+  background: var(--se-surface) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius) !important;
+  margin-bottom: 24px !important;
+  overflow: visible !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Scrollable wrapper so wide inline tables don't clip text */
+.tabular,
+.inline-related.tabular {
+  overflow: visible !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.inline-group .tabular fieldset.module,
+.inline-related.tabular fieldset.module,
+.tabular fieldset.module {
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.inline-group h2,
+.inline-group fieldset.module h2,
+.tabular fieldset.module h2 {
+  background: var(--se-surface-raised) !important;
+  color: var(--body-loud-color) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid var(--se-border) !important;
+  margin: 0 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase;
+  border-radius: calc(var(--se-radius) - 1px) calc(var(--se-radius) - 1px) 0 0 !important;
+}
+
+/* Wrapper scroll container ensures wide tables scroll horizontally without clipping */
+.inline-related.tabular div.wrapper,
+.tabular div.wrapper,
+.tabular .wrapper {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.tabular table {
+  width: 100% !important;
+  min-width: 680px !important;
+  border-collapse: collapse !important;
+  background: var(--se-surface) !important;
+  margin: 0 !important;
+  table-layout: auto !important;
+  box-sizing: border-box !important;
+}
+
+.tabular th {
+  background: var(--se-table-header-bg) !important;
+  color: var(--body-quiet-color) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 10px 14px !important;
+  border-bottom: 1px solid var(--se-border) !important;
+  border-top: none !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+}
+
+.tabular td {
+  padding: 10px 14px !important;
+  border-bottom: 1px solid var(--hairline-color) !important;
+  vertical-align: middle !important;
+  color: var(--body-fg) !important;
+  box-sizing: border-box !important;
+}
+
+/* th.original and td.original are Django internal hidden inputs, MUST not take up visual table space */
+.tabular th.original,
+.inline-group .tabular th.original {
+  width: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+}
+
+.tabular td.original,
+.inline-group .tabular td.original {
+  width: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+.tabular td.original p {
+  display: none !important;
+}
+
+/* Inline tabular form inputs — properly sized and responsive */
+.tabular td input[type=text],
+.tabular td input[type=url],
+.tabular td input[type=number],
+.tabular td input[type=email],
+.tabular td select,
+.tabular td textarea {
+  width: 100% !important;
+  min-width: 80px !important;
+  box-sizing: border-box !important;
+}
+
+.tabular td.field-stock input,
+.tabular td.field-price input {
+  min-width: 70px !important;
+}
+
+.tabular td.field-status {
+  text-align: center !important;
+  width: 60px !important;
+}
+
+.tabular td.delete,
+.tabular th:last-child {
+  width: 70px !important;
+  text-align: center !important;
+}
+
+.add-row {
+  background: var(--se-surface-raised) !important;
+  border-top: 1px solid var(--se-border) !important;
+  padding: 10px 16px !important;
+}
+
+.add-row a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  padding: 6px 14px !important;
+  border-radius: var(--se-radius-sm) !important;
+  text-decoration: none !important;
+  transition: background 0.15s ease !important;
+}
+
+.add-row a:hover {
+  background: var(--secondary) !important;
+}
+
+/* ── Submit Row ── */
+.submit-row {
+  background: var(--se-surface) !important;
+  border: 1px solid var(--se-border) !important;
+  border-radius: var(--se-radius) !important;
+  padding: 14px 18px !important;
+  margin: 20px 0 !important;
+  box-shadow: var(--se-shadow-sm) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.submit-row input[type=submit],
+.submit-row input.default {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 8px 18px !important;
+  border-radius: var(--se-radius-sm) !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.submit-row input[type=submit]:hover,
+.submit-row input.default:hover {
+  background: var(--secondary) !important;
+  transform: translateY(-1px) !important;
+}
+
+.submit-row a.deletelink {
+  background: var(--delete-button-bg) !important;
+  color: #ffffff !important;
+  padding: 8px 16px !important;
+  border-radius: var(--se-radius-sm) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  margin-left: auto !important;
+}
+
+.submit-row a.deletelink:hover {
+  background: var(--delete-button-hover-bg) !important;
+}
+
+/* ── Django Admin Dashboard / App Index ── */
+.dashboard .module table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.dashboard .module table th,
+.dashboard .module table td {
+  padding: 10px 16px !important;
+  border-bottom: 1px solid var(--hairline-color) !important;
+}
+
+.dashboard .module table caption {
+  background: var(--se-surface-raised) !important;
+  color: var(--body-loud-color) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid var(--se-border) !important;
+  text-align: left !important;
+}
+
+.dashboard .module table caption a {
+  color: var(--body-loud-color) !important;
+  text-decoration: none !important;
+}
+
+.dashboard .module table caption a:hover {
+  color: var(--link-fg) !important;
+}
+
+.dashboard #content {
+  width: 100% !important;
+}
+
+/* ── Command Center Banner ── */
+.se-command-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 22px 28px;
+  border-radius: 12px;
+  box-shadow: var(--se-shadow);
+  /* Light mode: clean white surface with a subtle blue-tinted border */
+  background: linear-gradient(135deg, var(--se-surface-raised), var(--se-surface));
+  border: 1px solid var(--se-border);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* Dark mode: original deep navy gradient */
+[data-theme="dark"] .se-command-banner {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border-color: #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.se-command-title {
+  margin: 0 0 6px 0 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  /* Light: dark slate text; Dark: white — both driven by token */
+  color: var(--body-loud-color) !important;
+}
+
+[data-theme="dark"] .se-command-title {
+  color: #ffffff !important;
+}
+
+.se-command-sub {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  color: var(--body-quiet-color) !important;
+  line-height: 1.5;
+}
+
+.se-command-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Primary CTA — always blue */
+.se-command-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary);
+  color: #ffffff !important;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none !important;
+  border: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.se-command-btn-primary:hover {
+  background: var(--secondary) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+/* Ghost CTA — adapts to mode */
+.se-command-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  /* Light: subtle surface with border */
+  background: var(--se-surface-raised);
+  color: var(--body-loud-color) !important;
+  border: 1px solid var(--se-border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none !important;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.se-command-btn-ghost:hover {
+  background: var(--se-border) !important;
+  color: var(--body-loud-color) !important;
+}
+
+/* Dark mode ghost: translucent white overlay like original */
+[data-theme="dark"] .se-command-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .se-command-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+/* Base shape — defined once, colors from theme tokens */
+.shopease-hub-icon {
+  /* already defined above as width/height/border-radius from hub CSS */
+}
+
+.shopease-hub-icon.users {
+  background-color: var(--se-bg-users) !important;
+  color: var(--se-users) !important;
+  border-color: var(--se-users) !important;
+}
+
+.shopease-hub-icon.catalogs {
+  background-color: var(--se-bg-catalogs) !important;
+  color: var(--se-catalogs) !important;
+  border-color: var(--se-catalogs) !important;
+}
+
+.shopease-hub-icon.orders {
+  background-color: var(--se-bg-orders) !important;
+  color: var(--se-orders) !important;
+  border-color: var(--se-orders) !important;
+}
+
+.shopease-hub-icon.logistics {
+  background-color: var(--se-bg-logistics) !important;
+  color: var(--se-logistics) !important;
+  border-color: var(--se-logistics) !important;
+}
+
+.shopease-hub-icon.inventory {
+  background-color: var(--se-bg-inventory) !important;
+  color: var(--se-inventory) !important;
+  border-color: var(--se-inventory) !important;
+}
+
+.shopease-hub-icon.vendors {
+  background-color: var(--se-bg-vendors) !important;
+  color: var(--se-vendors) !important;
+  border-color: var(--se-vendors) !important;
+}
+
+.shopease-hub-icon.marketing {
+  background-color: var(--se-bg-marketing) !important;
+  color: var(--se-marketing) !important;
+  border-color: var(--se-marketing) !important;
+}
+
+/* ── #user-tools — force horizontal row (overrides Django block default) ── */
+#user-tools {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+  color: var(--header-color) !important;
+}
+
+#user-tools a,
+#user-tools strong {
+  color: var(--header-color) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+}
+
+#user-tools a:hover {
+  text-decoration: underline !important;
+  color: var(--link-fg) !important;
+}
+
+.selector-available-title,
+.selector-chosen-title {
+  background: var(--darkened-bg) !important;
+  color: var(--body-quiet-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.selector-available-title label,
+.selector-chosen-title label {
+  color: var(--body-loud-color) !important;
+  font-weight: 600 !important;
+}
+
+.selector-available-title p,
+.selector-available-title .help,
+.selector-chosen-title p,
+.selector-chosen-title .help {
+  color: var(--body-quiet-color) !important;
+}

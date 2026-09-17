@@ -40,7 +40,7 @@ class DispatchSerializer(serializers.Serializer):
     """
 
     order_id = serializers.IntegerField(required=True)
-    warehouse_id = serializers.IntegerField(required=True)
+    warehouse_id = serializers.IntegerField(required=False, allow_null=True)
     tracking_number = serializers.CharField(max_length=100, required=True)
     carrier = serializers.CharField(max_length=100, required=True)
     ship_date = serializers.DateField(required=False)

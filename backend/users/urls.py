@@ -15,7 +15,7 @@ class ThrottledTokenObtainPairView(TokenObtainPairView):
 
 class ThrottledTokenRefreshView(TokenRefreshView):
     throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "auth"
+    throttle_scope = "token_refresh"
 
 # Views:
 from .views import (
@@ -29,6 +29,7 @@ from .views import (
     AdminUserDetailView,
     AdminCustomerListView,
     AdminEmployeeListView,
+    AdminStatsView,
     MeView,
 )
 
@@ -63,9 +64,11 @@ urlpatterns = [
     # Admin-only: promote a registered user to employee
     path("employees/", EmployeeCreateView.as_view(), name="employee-create"),
 
-    # Admin Panel: user, customer, employee management
+    # Admin Panel: stats, user, customer, employee management
+    path("admin/stats/", AdminStatsView.as_view(), name="admin-stats"),
     path("users/", AdminUserListView.as_view(), name="admin-user-list"),
     path("users/<int:pk>/", AdminUserDetailView.as_view(), name="admin-user-detail"),
     path("customers/", AdminCustomerListView.as_view(), name="admin-customer-list"),
     path("employees/list/", AdminEmployeeListView.as_view(), name="admin-employee-list"),
 ]
+

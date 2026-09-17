@@ -9,6 +9,7 @@ from .views import (
     ProductDeleteView,
     VariantListCreateView,
     VariantDetailView,
+    AllVariantsListView,
 )
 
 app_name = "products"
@@ -18,6 +19,8 @@ urlpatterns = [
     path("brands/", BrandListView.as_view(), name="brand-list"),
     path("", ProductListView.as_view(), name="list"),
     path("create/", ProductCreateView.as_view(), name="create"),
+    # All variants list
+    path("variants/all/", AllVariantsListView.as_view(), name="all-variants"),
     # Variant detail/update/delete — must come before slug routes to avoid matching
     path("variants/<int:pk>/", VariantDetailView.as_view(), name="variant-detail"),
     # Product detail, update, delete

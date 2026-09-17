@@ -27,7 +27,7 @@ class WishlistView(DomainErrorMixin, generics.RetrieveAPIView):
     serializer_class = WishlistSerializer
 
     def get_object(self):
-        customer = Customer.objects.get(user=self.request.user)
+        customer, _ = Customer.objects.get_or_create(user=self.request.user)
         return get_or_create_wishlist(customer=customer)
 
 
@@ -43,7 +43,7 @@ class WishlistItemAddView(DomainErrorMixin, generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        customer = Customer.objects.get(user=request.user)
+        customer, _ = Customer.objects.get_or_create(user=request.user)
         item = add_to_wishlist(
             customer=customer,
             product_id=serializer.validated_data["product_id"],
@@ -62,7 +62,7 @@ class WishlistItemRemoveView(DomainErrorMixin, generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, product_id, *args, **kwargs):
-        customer = Customer.objects.get(user=request.user)
+        customer, _ = Customer.objects.get_or_create(user=request.user)
         removed = remove_from_wishlist(customer=customer, product_id=product_id)
         if removed:
             return Response(
@@ -83,7 +83,7 @@ class WishlistClearView(DomainErrorMixin, generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        customer = Customer.objects.get(user=request.user)
+        customer, _ = Customer.objects.get_or_create(user=request.user)
         count = clear_wishlist(customer=customer)
         return Response(
             {"message": f"Wishlist cleared ({count} items removed)."},

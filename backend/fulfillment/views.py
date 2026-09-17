@@ -64,9 +64,23 @@ class DispatchOrderView(DomainErrorMixin, generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         order = get_object_or_404(Order, pk=serializer.validated_data["order_id"])
+
+        user_warehouse_id = getattr(getattr(request.user, "employee_profile", None), "warehouse_id", None)
+        target_warehouse_id = (
+            user_warehouse_id
+            or order.locked_by_warehouse_id
+            or serializer.validated_data.get("warehouse_id")
+        )
+
+        if not target_warehouse_id:
+            return Response(
+                {"detail": "No warehouse assigned or specified for dispatch."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         shipment = dispatch_order(
             order=order,
-            warehouse_id=serializer.validated_data["warehouse_id"],
+            warehouse_id=target_warehouse_id,
             tracking_number=serializer.validated_data["tracking_number"],
             carrier=serializer.validated_data["carrier"],
             ship_date=serializer.validated_data.get("ship_date"),

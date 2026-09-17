@@ -63,7 +63,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", _INSECURE_DEV_KEY)
 # SECURITY: Never set DEBUG=True in production.
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").strip().lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver")
 
 # ---------------------------------------------------------------------------
 # Application definition
@@ -112,7 +112,7 @@ ROOT_URLCONF = "backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -162,11 +162,15 @@ USE_I18N = True
 USE_TZ = True
 
 # ---------------------------------------------------------------------------
-# Static files
+# Static & Media files
 # ---------------------------------------------------------------------------
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"  # required for collectstatic in production
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # ---------------------------------------------------------------------------
 # Security headers (safe in dev, required in production)
@@ -213,6 +217,8 @@ REST_FRAMEWORK = {
         "user": os.environ.get("DJANGO_THROTTLE_USER", "300/minute"),
         # Dedicated scope for sensitive auth endpoints (login / register)
         "auth": os.environ.get("DJANGO_THROTTLE_AUTH", "10/minute"),
+        # Dedicated scope for background JWT token refreshes
+        "token_refresh": os.environ.get("DJANGO_THROTTLE_REFRESH", "120/minute"),
     },
 }
 

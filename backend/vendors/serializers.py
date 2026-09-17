@@ -158,8 +158,8 @@ class ImportCreateSerializer(serializers.Serializer):
     """Input serializer for creating an Import with line items."""
 
     vendor_id = serializers.IntegerField()
-    warehouse_id = serializers.IntegerField()
-    import_date = serializers.DateField()
+    warehouse_id = serializers.IntegerField(required=False, allow_null=True)
+    import_date = serializers.DateField(required=False, allow_null=True)
     items = ImportItemCreateSerializer(many=True)
 
     def validate_items(self, value):

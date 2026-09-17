@@ -156,14 +156,29 @@ class ImportListCreateView(DomainErrorMixin, generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        from django.utils import timezone
+
         vendor = get_object_or_404(Vendor, pk=serializer.validated_data["vendor_id"])
-        warehouse = get_object_or_404(
-            Warehouse, pk=serializer.validated_data["warehouse_id"]
-        )
+
+        warehouse_id = serializer.validated_data.get("warehouse_id")
+        if not warehouse_id:
+            profile = getattr(request.user, "employee_profile", None)
+            if profile and profile.warehouse_id:
+                warehouse_id = profile.warehouse_id
+
+        if not warehouse_id:
+            return Response(
+                {"detail": "No warehouse assigned or specified for import."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        warehouse = get_object_or_404(Warehouse, pk=warehouse_id)
+        import_date = serializer.validated_data.get("import_date") or timezone.now().date()
+
         import_record = create_import(
             vendor=vendor,
             warehouse=warehouse,
-            import_date=serializer.validated_data["import_date"],
+            import_date=import_date,
             items=serializer.validated_data["items"],
             created_by=request.user,
         )

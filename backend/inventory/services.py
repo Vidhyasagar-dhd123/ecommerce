@@ -252,3 +252,122 @@ def receive_import(*, import_record, received_by) -> None:
         import_record.items.count(),
     )
 
+
+@transaction.atomic
+def transfer_stock(
+    *,
+    source_warehouse_id: int,
+    target_warehouse_id: int,
+    variant_id: int,
+    quantity: int,
+    employee,
+    notes: str = "",
+) -> dict:
+    """
+    Atomically transfers stock of a variant from source warehouse to target warehouse.
+
+    Validates:
+    - quantity > 0
+    - source_warehouse != target_warehouse
+    - employee has access to source_warehouse
+    - source warehouse has available_stock >= quantity
+
+    Creates:
+    - TRANSFER_OUT StockTransaction on source warehouse (-quantity)
+    - TRANSFER_IN StockTransaction on target warehouse (+quantity)
+    - Syncs overall variant stock.
+    """
+    if quantity <= 0:
+        raise DomainError("Transfer quantity must be greater than zero.")
+
+    if int(source_warehouse_id) == int(target_warehouse_id):
+        raise DomainError("Source and target warehouse cannot be the same.")
+
+    from .models import Warehouse
+
+    try:
+        source_wh = Warehouse.objects.get(pk=source_warehouse_id, is_deleted=False)
+    except Warehouse.DoesNotExist:
+        raise DomainError("Source warehouse not found.")
+
+    try:
+        target_wh = Warehouse.objects.get(pk=target_warehouse_id, is_deleted=False)
+    except Warehouse.DoesNotExist:
+        raise DomainError("Target warehouse not found.")
+
+    if employee:
+        validate_employee_warehouse_access(employee, source_wh.pk)
+
+    # Lock source inventory record
+    source_inv = (
+        Inventory.objects.select_for_update()
+        .filter(warehouse=source_wh, variant_id=variant_id, is_deleted=False)
+        .first()
+    )
+
+    if not source_inv or source_inv.available_stock < quantity:
+        available = source_inv.available_stock if source_inv else 0
+        raise InsufficientStockError(
+            f"Insufficient available stock in {source_wh.name}. Requested: {quantity}, Available: {available}."
+        )
+
+    # Deduct from source warehouse
+    source_inv.stock -= quantity
+    source_inv.update_available_stock()
+
+    ref_out = f"transfer-to-wh-{target_wh.pk}"
+    tx_out = StockTransaction.objects.create(
+        inventory=source_inv,
+        variant_id=variant_id,
+        employee=employee,
+        type=StockTransactionType.TRANSFER_OUT,
+        quantity=-quantity,
+        reference_id=ref_out,
+        notes=notes or f"Transferred to {target_wh.name}",
+    )
+
+    # Credit to target warehouse (get or create record)
+    target_inv, _ = Inventory.objects.select_for_update().get_or_create(
+        warehouse=target_wh,
+        variant_id=variant_id,
+        defaults={
+            "stock": 0,
+            "reserved_stock": 0,
+            "available_stock": 0,
+            "reorder_level": source_inv.reorder_level,
+        },
+    )
+    target_inv.stock += quantity
+    target_inv.update_available_stock()
+
+    ref_in = f"transfer-from-wh-{source_wh.pk}"
+    tx_in = StockTransaction.objects.create(
+        inventory=target_inv,
+        variant_id=variant_id,
+        employee=employee,
+        type=StockTransactionType.TRANSFER_IN,
+        quantity=quantity,
+        reference_id=ref_in,
+        notes=notes or f"Received from {source_wh.name}",
+    )
+
+    _sync_variant_stock(variant_id)
+
+    logger.info(
+        "Stock transferred: %s units of variant %s from %s to %s by %s",
+        quantity,
+        variant_id,
+        source_wh.name,
+        target_wh.name,
+        getattr(employee, "username", employee),
+    )
+
+    return {
+        "source_transaction": tx_out,
+        "target_transaction": tx_in,
+        "source_inventory": source_inv,
+        "target_inventory": target_inv,
+        "quantity": quantity,
+    }
+
+

@@ -112,3 +112,41 @@ class StockTransactionSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = fields  # Transactions are immutable — read-only
+
+
+class StockTransferItemSerializer(serializers.Serializer):
+    variant_id = serializers.IntegerField(required=True)
+    quantity = serializers.IntegerField(min_value=1, required=True)
+
+
+class StockTransferSerializer(serializers.Serializer):
+    """
+    Input serializer for inter-warehouse stock transfer.
+    Supports single-variant transfer or multi-item batch transfer.
+    """
+
+    target_warehouse_id = serializers.IntegerField(required=True)
+    notes = serializers.CharField(max_length=255, required=False, default="")
+    variant_id = serializers.IntegerField(required=False)
+    quantity = serializers.IntegerField(min_value=1, required=False)
+    items = StockTransferItemSerializer(many=True, required=False)
+
+    def validate(self, attrs):
+        if not attrs.get("items") and not (attrs.get("variant_id") and attrs.get("quantity")):
+            raise serializers.ValidationError(
+                "Either 'variant_id' and 'quantity', or an 'items' list must be provided."
+            )
+        return attrs
+
+
+class WarehouseStatsSerializer(serializers.Serializer):
+    warehouse_id = serializers.IntegerField()
+    warehouse_name = serializers.CharField()
+    total_skus = serializers.IntegerField()
+    total_stock = serializers.IntegerField()
+    total_reserved = serializers.IntegerField()
+    total_available = serializers.IntegerField()
+    reorder_alerts_count = serializers.IntegerField()
+    recent_transactions_count = serializers.IntegerField()
+    pending_imports_count = serializers.IntegerField()
+

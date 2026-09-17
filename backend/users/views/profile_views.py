@@ -190,3 +190,81 @@ class AdminEmployeeListView(generics.ListAPIView):
         if designation:
             qs = qs.filter(designation=designation)
         return qs
+
+
+class AdminStatsView(APIView):
+    """
+    GET /api/v1/auth/admin/stats/
+    Admin-only: returns platform overview metrics across users, orders, revenue, inventory, and fulfillment.
+    """
+
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        from django.db.models import Sum, Count, Q
+        from users.models import User
+        from orders.models import Order
+        from products.models import Product, ProductVariant
+        from fulfillment.models import Return, Shipment
+        from promotions.models import Coupon
+
+        # Users breakdown
+        total_users = User.objects.count()
+        total_customers = User.objects.filter(role="customer").count()
+        total_employees = User.objects.filter(role="employee").count()
+        total_admins = User.objects.filter(role="admin").count()
+        active_users = User.objects.filter(is_active=True).count()
+
+        # Orders breakdown
+        total_orders = Order.objects.count()
+        pending_orders = Order.objects.filter(status="pending").count()
+        confirmed_orders = Order.objects.filter(status="confirmed").count()
+        shipped_orders = Order.objects.filter(status="shipped").count()
+        delivered_orders = Order.objects.filter(status="delivered").count()
+        cancelled_orders = Order.objects.filter(status="cancelled").count()
+
+        # Revenue
+        revenue_data = Order.objects.exclude(status="cancelled").aggregate(total=Sum("total_amount"))
+        total_revenue = float(revenue_data["total"] or 0)
+
+        # Catalog & Inventory
+        total_products = Product.objects.count()
+        total_variants = ProductVariant.objects.count()
+        low_stock_variants = ProductVariant.objects.filter(stock__gt=0, stock__lt=10).count()
+        out_of_stock_variants = ProductVariant.objects.filter(stock=0).count()
+
+        # Fulfillment & Marketing
+        pending_returns = Return.objects.filter(status__in=["received", "approved"]).count()
+        active_shipments = Shipment.objects.filter(delivery_date__isnull=True).count()
+        active_coupons = Coupon.objects.filter(status=True).count()
+
+        return Response({
+            "users": {
+                "total": total_users,
+                "customers": total_customers,
+                "employees": total_employees,
+                "admins": total_admins,
+                "active": active_users,
+            },
+            "orders": {
+                "total": total_orders,
+                "pending": pending_orders,
+                "confirmed": confirmed_orders,
+                "shipped": shipped_orders,
+                "delivered": delivered_orders,
+                "cancelled": cancelled_orders,
+                "revenue": total_revenue,
+            },
+            "inventory": {
+                "products": total_products,
+                "variants": total_variants,
+                "low_stock": low_stock_variants,
+                "out_of_stock": out_of_stock_variants,
+            },
+            "operations": {
+                "pending_returns": pending_returns,
+                "active_shipments": active_shipments,
+                "active_coupons": active_coupons,
+            }
+        })
+

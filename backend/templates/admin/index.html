@@ -1,0 +1,252 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div id="content-main">
+  <!-- Operational Hub Overview -->
+  <div style="margin-bottom: 24px;">
+    <div class="se-command-banner">
+      <div>
+        <h2 class="se-command-title">ShopEase Superuser Command Center</h2>
+        <p class="se-command-sub">Manage users, catalog, order workflows, logistics, inventory, and promotions across the platform.</p>
+      </div>
+      <div class="se-command-actions">
+        <a href="http://localhost:5173/admin/dashboard" target="_blank" class="se-command-btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          React Admin Dashboard
+        </a>
+        <a href="{% url 'admin:products_product_add' %}" class="se-command-btn-ghost">+ New Product</a>
+        <a href="{% url 'admin:users_user_add' %}" class="se-command-btn-ghost">+ New User</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operational Domain Hub Cards -->
+  <div class="shopease-dashboard-hub">
+    <!-- Hub: Identity & Users -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon users">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Identity & Access</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Users, Staff, Customers, Addresses</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:users_user_changelist' %}">Users</a>
+          <a href="{% url 'admin:users_user_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:users_employee_changelist' %}">Employees & Staff</a>
+          <a href="{% url 'admin:users_employee_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:users_customer_changelist' %}">Customers</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Profiles</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:users_address_changelist' %}">Delivery Addresses</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Addresses</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hub: Catalog & Products -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon catalogs">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Catalog & Products</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Products, SKUs, Categories, Media</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:products_product_changelist' %}">Products</a>
+          <a href="{% url 'admin:products_product_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:products_productvariant_changelist' %}">Product Variants (SKUs)</a>
+          <a href="{% url 'admin:products_productvariant_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:products_category_changelist' %}">Categories</a>
+          <a href="{% url 'admin:products_category_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:products_brand_changelist' %}">Brands</a>
+          <a href="{% url 'admin:products_brand_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:products_productimage_changelist' %}">Product Images (Gallery)</a>
+          <a href="{% url 'admin:products_productimage_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hub: Orders & Commerce -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon orders">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Orders & Sales</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Orders, Payments, Invoices, Cart</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:orders_order_changelist' %}">Orders (Lifecycle)</a>
+          <span class="badge-pill badge-primary" style="font-size: 10px;">Core</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:orders_orderitem_changelist' %}">Order Items</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Lines</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:orders_payment_changelist' %}">Payments</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Gateway</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:orders_invoice_changelist' %}">Invoices</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Billing</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:cart_cart_changelist' %}">Active Carts & Wishlists</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Baskets</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hub: Logistics & Fulfillment -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon logistics">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18.5" r="2.5"/><circle cx="7" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Logistics & Returns</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Shipments, Returns, Exchanges, Refunds</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:fulfillment_shipment_changelist' %}">Shipments & Dispatches</a>
+          <a href="{% url 'admin:fulfillment_shipment_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:fulfillment_return_changelist' %}">Return Requests</a>
+          <span class="badge-pill badge-warning" style="font-size: 10px;">Workflow</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:fulfillment_exchange_changelist' %}">Exchange Requests</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Replacement</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:fulfillment_refund_changelist' %}">Customer Refunds</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Payouts</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hub: Inventory & Warehouses -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon inventory">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 18h16"/><path d="M6 18V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M14 9h1"/><path d="M14 13h1"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Inventory & Stock</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Warehouses, Levels, Audit Ledger</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:inventory_inventory_changelist' %}">Inventory Stock Levels</a>
+          <span class="badge-pill badge-info" style="font-size: 10px;">Stock Matrix</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:inventory_warehouse_changelist' %}">Warehouses</a>
+          <a href="{% url 'admin:inventory_warehouse_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:inventory_stocktransaction_changelist' %}">Stock Audit Transactions</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Ledger</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hub: Vendors & Procurement -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon vendors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Vendors & Procurement</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Suppliers, Purchase Orders, Imports</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:vendors_vendor_changelist' %}">Vendors / Suppliers</a>
+          <a href="{% url 'admin:vendors_vendor_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:vendors_purchaseorder_changelist' %}">Purchase Orders (PO)</a>
+          <a href="{% url 'admin:vendors_purchaseorder_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:vendors_import_changelist' %}">Imports & Inbound Stock</a>
+          <a href="{% url 'admin:vendors_import_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hub: Marketing & Offers -->
+    <div class="shopease-hub-card">
+      <div class="shopease-hub-header">
+        <div class="shopease-hub-icon marketing">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+        </div>
+        <div>
+          <h3 class="shopease-hub-title">Marketing & Offers</h3>
+          <span style="font-size: 12px; color: var(--body-quiet-color);">Coupons, Deals, Product Reviews</span>
+        </div>
+      </div>
+      <ul class="shopease-hub-items">
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:promotions_coupon_changelist' %}">Coupons & Vouchers</a>
+          <a href="{% url 'admin:promotions_coupon_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:promotions_offer_changelist' %}">Special Offers & Deals</a>
+          <a href="{% url 'admin:promotions_offer_add' %}" style="color: var(--link-fg); font-size: 12px; font-weight: 600;">+ Add</a>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:reviews_review_changelist' %}">Customer Reviews</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Moderation</span>
+        </li>
+        <li class="shopease-hub-item">
+          <a href="{% url 'admin:finance_dues_changelist' %}">Customer Dues Ledger</a>
+          <span style="color: var(--body-quiet-color); font-size: 11px;">Credit</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Standard App List -->
+  <div style="margin-top: 10px; ">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--body-loud-color); margin-bottom: 14px;">All Registered Applications & Models</h3>
+    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap: 20px;">
+      {% include "admin/app_list.html" with app_list=app_list %}
+    </div>
+  </div>
+</div>
+{% endblock %}

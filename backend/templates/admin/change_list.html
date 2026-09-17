@@ -1,0 +1,184 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static "admin/css/changelists.css" %}">
+  {% if cl.formset %}
+    <link rel="stylesheet" href="{% static "admin/css/forms.css" %}">
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+<script src="{% static 'admin/js/filters.js' %}" defer></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Dashboard' %}</a>
+  <span class="breadcrumbs-separator">/</span>
+  <span class="breadcrumbs-current">{{ cl.opts.verbose_name_plural|capfirst }}</span>
+</div>
+{% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block content %}
+<div id="content-main" class="shopease-changelist-layout">
+  {% block object-tools %}
+    <header class="shopease-page-header">
+      <div class="shopease-page-title-group">
+        <h1 class="shopease-page-title">{{ cl.opts.verbose_name_plural|capfirst }}</h1>
+        <p class="shopease-page-subtitle">
+          {% if cl.opts.model_name == 'product' %}
+            Manage your product catalog, inventory levels, SKUs, and pricing.
+          {% elif cl.opts.model_name == 'order' %}
+            Monitor customer orders, fulfillment workflows, and payment statuses.
+          {% elif cl.opts.model_name == 'user' or cl.opts.model_name == 'customer' %}
+            View registered user profiles, account privileges, and customer data.
+          {% elif cl.opts.model_name == 'coupon' or cl.opts.model_name == 'offer' %}
+            Configure promotional campaigns, active deals, and voucher codes.
+          {% elif cl.opts.model_name == 'inventory' or cl.opts.model_name == 'warehouse' %}
+            Track warehouse inventory matrix, safety stock, and transactions.
+          {% else %}
+            View and manage {{ cl.opts.verbose_name_plural|lower }} across your platform.
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="shopease-page-actions">
+        {% if cl.has_filters %}
+          <button type="button" class="shopease-filter-toggle-btn" id="shopeaseFilterToggleBtn" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <span>Filters</span>
+          </button>
+        {% endif %}
+
+        {% if has_add_permission %}
+          {% url cl.opts|admin_urlname:'add' as add_url %}
+          <a href="{% add_preserved_filters add_url is_popup to_field %}" class="shopease-btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            + Add {{ cl.opts.verbose_name|capfirst }}
+          </a>
+        {% endif %}
+      </div>
+    </header>
+  {% endblock %}
+
+  <!-- Messages Toast Notification -->
+  {% if messages %}
+    <div class="shopease-messages-container">
+      {% for message in messages %}
+        <div class="shopease-alert shopease-alert-{{ message.tags }}">
+          <div class="shopease-alert-content">
+            <span class="shopease-alert-icon">
+              {% if message.tags == 'success' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+              {% endif %}
+            </span>
+            <span class="shopease-alert-text">{{ message }}</span>
+          </div>
+          <button type="button" class="shopease-alert-close" onclick="this.parentElement.remove()" aria-label="Dismiss">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="shopease-workspace-wrapper">
+    <!-- Main Content Area -->
+    <div class="shopease-workspace-main">
+      {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+          {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.non_form_errors }}
+      {% endif %}
+
+      <!-- Search Toolbar -->
+      <div class="shopease-search-toolbar">
+        {% block search %}
+          {% if cl.search_fields %}
+            <form id="changelist-search" method="get" class="shopease-search-form">
+              <div class="shopease-search-input-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shopease-search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" size="40" name="{{ search_var }}" value="{{ cl.query }}" id="searchbar" placeholder="Search by name, SKU, brand, or status..." autofocus />
+                {% if cl.query %}
+                  <a href="?" class="shopease-search-clear" title="Clear search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </a>
+                {% endif %}
+              </div>
+              <button type="submit" class="shopease-btn-search">Search</button>
+              {% for pair in cl.params.items %}
+                {% if pair.0 != search_var %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+              {% endfor %}
+            </form>
+          {% endif %}
+        {% endblock %}
+      </div>
+
+      <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+        {% csrf_token %}
+        {% if cl.formset %}
+          <div>{{ cl.formset.management_form }}</div>
+        {% endif %}
+
+        {% block date_hierarchy %}{% if cl.date_hierarchy %}{% date_hierarchy cl %}{% endif %}{% endblock %}
+
+        {% if action_form and actions_on_top and cl.show_admin_actions %}
+          {% admin_actions %}
+        {% endif %}
+
+        {% block result_list %}
+          <div class="shopease-table-container">
+            {% result_list cl %}
+          </div>
+        {% endblock %}
+
+        {% if action_form and actions_on_bottom and cl.show_admin_actions %}
+          {% admin_actions %}
+        {% endif %}
+
+        {% block pagination %}
+          {% pagination cl %}
+        {% endblock %}
+      </form>
+    </div>
+
+    <!-- Collapsible Right Filter Drawer -->
+    {% if cl.has_filters %}
+      <aside class="shopease-filter-drawer" id="shopeaseFilterDrawer" aria-label="Filters">
+        <div class="shopease-filter-header">
+          <div class="shopease-filter-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <span>Filter Catalog</span>
+          </div>
+          <button type="button" class="shopease-filter-close" id="shopeaseFilterCloseBtn" aria-label="Close filters">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="shopease-filter-body" id="changelist-filter">
+          {% for spec in cl.filter_specs %}
+            {% admin_list_filter cl spec %}
+          {% endfor %}
+        </div>
+      </aside>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

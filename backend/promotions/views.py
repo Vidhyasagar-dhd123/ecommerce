@@ -85,7 +85,7 @@ class CouponValidateView(DomainErrorMixin, generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        customer = Customer.objects.get(user=request.user)
+        customer, _ = Customer.objects.get_or_create(user=request.user)
         cart = get_or_create_active_cart(customer=customer)
 
         coupon = validate_coupon(

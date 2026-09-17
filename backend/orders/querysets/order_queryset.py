@@ -25,6 +25,9 @@ class OrderQuerySet(SoftDeleteQuerySet):
             "address",
             "payment",
             "invoice",
+            "locked_by_warehouse",
+            "locked_by",
+            "updated_by",
         ).prefetch_related(
             "items__variant__product",
         )

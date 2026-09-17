@@ -10,6 +10,7 @@ import logging
 from decimal import Decimal
 from django.db import transaction
 from django.db.models import F
+from django.utils import timezone
 
 from core.exceptions import (
     CartEmptyError,
@@ -24,7 +25,11 @@ from cart.models import Cart
 from products.models import ProductVariant
 from inventory.models import Inventory
 from inventory.services import reserve_stock, release_reserved_stock
-from promotions.services import get_active_offer_for_product, validate_coupon, redeem_coupon
+from promotions.services import (
+    get_active_offer_for_product,
+    validate_coupon,
+    redeem_coupon,
+)
 from users.models import Address
 from .models import Order, OrderItem, Payment, Invoice, OrderStatus, PaymentMethod
 
@@ -74,12 +79,18 @@ def validate_order_warehouse_access(order: Order, user) -> None:
 def lock_order(*, order: Order, employee) -> Order:
     """
     Lock an order to the employee's assigned warehouse.
+    Only orders in PENDING status can be locked.
     If already locked by another warehouse, raises OrderAlreadyLockedError.
     If already locked by the same warehouse, refreshes the lock.
     """
     from django.utils import timezone
 
     locked_order = Order.objects.select_for_update().get(pk=order.pk)
+
+    if locked_order.status != OrderStatus.PENDING:
+        raise InvalidStatusTransitionError(
+            f"Cannot lock order #{locked_order.pk}: Only orders in PENDING status can be locked."
+        )
 
     if not getattr(employee, "is_admin_user", False):
         profile = getattr(employee, "employee_profile", None)
@@ -133,6 +144,15 @@ def lock_order(*, order: Order, employee) -> Order:
     locked_order.save(
         update_fields=["locked_by_warehouse", "locked_by", "locked_at", "updated_at"]
     )
+
+    if target_warehouse:
+        from inventory.models import Inventory
+        for item in locked_order.items.all():
+            wh_inv = Inventory.objects.filter(warehouse=target_warehouse, variant=item.variant).first()
+            if wh_inv and item.inventory_id != wh_inv.pk:
+                item.inventory = wh_inv
+                item.save(update_fields=["inventory"])
+
     logger.info(
         "Order #%s locked by warehouse '%s' (Employee: %s)",
         locked_order.pk,
@@ -146,13 +166,19 @@ def lock_order(*, order: Order, employee) -> Order:
 def unlock_order(*, order: Order, employee) -> Order:
     """
     Unlock an order, making it available for other warehouses to lock.
-    Only employees of the locking warehouse (or admins) can unlock the order.
+    Only employees of the locking warehouse (or admins) can unlock the order,
+    and only if the order is still in PENDING status.
     """
     locked_order = Order.objects.select_for_update().get(pk=order.pk)
     if not locked_order.locked_by_warehouse_id:
         return locked_order
 
     validate_order_warehouse_access(locked_order, employee)
+
+    if locked_order.status != OrderStatus.PENDING:
+        raise InvalidStatusTransitionError(
+            f"Cannot release order #{locked_order.pk}: Only orders in PENDING status can be released."
+        )
 
     locked_order.locked_by_warehouse = None
     locked_order.locked_by = None
@@ -200,14 +226,20 @@ def create_order_from_cart(
     )
 
     if not cart or not cart.items.exists():
-        logger.warning("Checkout rejected: Active cart for customer #%s is empty", customer.pk)
+        logger.warning(
+            "Checkout rejected: Active cart for customer #%s is empty", customer.pk
+        )
         raise CartEmptyError("Cannot place an order with an empty cart.")
 
     # Validate address
     try:
         address = Address.objects.get(pk=address_id, customer=customer)
     except Address.DoesNotExist:
-        logger.warning("Checkout rejected: Address #%s not found for customer #%s", address_id, customer.pk)
+        logger.warning(
+            "Checkout rejected: Address #%s not found for customer #%s",
+            address_id,
+            customer.pk,
+        )
         raise ValueError("Invalid shipping address.")
 
     # Lock variants to prevent overselling race conditions
@@ -259,18 +291,22 @@ def create_order_from_cart(
         active_offer = get_active_offer_for_product(product)
         if active_offer:
             unit_discount = active_offer.calculate_discount(unit_price)
-            line_offer_discount = (unit_discount * item.quantity).quantize(Decimal("0.01"))
+            line_offer_discount = (unit_discount * item.quantity).quantize(
+                Decimal("0.01")
+            )
         else:
             line_offer_discount = Decimal("0.00")
 
         total_offer_discount += line_offer_discount
-        line_item_data.append({
-            "item": item,
-            "unit_price": unit_price,
-            "line_gross": line_gross,
-            "offer_discount": line_offer_discount,
-            "net_after_offer": line_gross - line_offer_discount,
-        })
+        line_item_data.append(
+            {
+                "item": item,
+                "unit_price": unit_price,
+                "line_gross": line_gross,
+                "offer_discount": line_offer_discount,
+                "net_after_offer": line_gross - line_offer_discount,
+            }
+        )
 
     subtotal_after_offers = max(Decimal("0.00"), gross_sub_total - total_offer_discount)
 
@@ -311,20 +347,27 @@ def create_order_from_cart(
         variant = variants[item.variant_id]
         inventory = (
             reserve_stock(variant_id=variant.pk, quantity=item.quantity)
-            if Inventory.objects.filter(variant_id=variant.pk, is_deleted=False).exists()
+            if Inventory.objects.filter(
+                variant_id=variant.pk, is_deleted=False
+            ).exists()
             else None
         )
 
         # Allocate proportional coupon discount to line item
-        if subtotal_after_offers > Decimal("0.00") and coupon_discount_amount > Decimal("0.00"):
+        if subtotal_after_offers > Decimal("0.00") and coupon_discount_amount > Decimal(
+            "0.00"
+        ):
             item_coupon_part = (
-                (line["net_after_offer"] / subtotal_after_offers) * coupon_discount_amount
+                (line["net_after_offer"] / subtotal_after_offers)
+                * coupon_discount_amount
             ).quantize(Decimal("0.01"))
         else:
             item_coupon_part = Decimal("0.00")
 
         item_total_discount = line["offer_discount"] + item_coupon_part
-        item_total_price = max(Decimal("0.00"), line["line_gross"] - item_total_discount)
+        item_total_price = max(
+            Decimal("0.00"), line["line_gross"] - item_total_discount
+        )
 
         order_items.append(
             OrderItem(
@@ -338,7 +381,9 @@ def create_order_from_cart(
             )
         )
         if inventory is None:
-            ProductVariant.objects.filter(pk=variant.pk).update(stock=F("stock") - item.quantity)
+            ProductVariant.objects.filter(pk=variant.pk).update(
+                stock=F("stock") - item.quantity
+            )
 
     OrderItem.objects.bulk_create(order_items)
 
@@ -391,7 +436,9 @@ def confirm_order(*, order: Order, confirmed_by=None) -> Order:
         validate_order_warehouse_access(order, confirmed_by)
 
     if order.status != OrderStatus.PENDING:
-        logger.warning("Cannot confirm order #%s in status '%s'", order.pk, order.status)
+        logger.warning(
+            "Cannot confirm order #%s in status '%s'", order.pk, order.status
+        )
         raise InvalidStatusTransitionError(
             f"Order #{order.pk} must be in PENDING status to be confirmed."
         )
@@ -399,7 +446,7 @@ def confirm_order(*, order: Order, confirmed_by=None) -> Order:
     order.status = OrderStatus.CONFIRMED
     if confirmed_by:
         order.updated_by = confirmed_by
-    order.save(update_fields=["status", "updated_at"])
+    order.save(update_fields=["status", "updated_by", "updated_at"])
     logger.info("Order #%s transitioned to CONFIRMED", order.pk)
     return order
 
@@ -408,12 +455,24 @@ def confirm_order(*, order: Order, confirmed_by=None) -> Order:
 def cancel_order(*, order: Order, cancelled_by=None) -> Order:
     """
     Cancel an order and restore the reserved inventory stock.
+    Employees can only cancel an order if it is locked to their assigned warehouse (unless admin).
     Only PENDING or CONFIRMED orders can be cancelled.
 
     Raises:
         OrderCancellationError: If order is not in a cancellable state.
+        WarehouseAccessDeniedError: If order is not locked to the employee's warehouse.
     """
     if cancelled_by and not getattr(cancelled_by, "is_customer", False):
+        if not getattr(cancelled_by, "is_admin_user", False):
+            profile = getattr(cancelled_by, "employee_profile", None)
+            if (
+                not order.locked_by_warehouse_id
+                or not profile
+                or profile.warehouse_id != order.locked_by_warehouse_id
+            ):
+                raise WarehouseAccessDeniedError(
+                    f"Order #{order.pk} can only be cancelled by the warehouse that has it locked. Please lock the order first."
+                )
         validate_order_warehouse_access(order, cancelled_by)
 
     if not order.can_cancel():
@@ -447,7 +506,101 @@ def cancel_order(*, order: Order, cancelled_by=None) -> Order:
     order.status = OrderStatus.CANCELLED
     if cancelled_by:
         order.updated_by = cancelled_by
-    order.save(update_fields=["status", "updated_at"])
+    order.save(update_fields=["status", "updated_by", "updated_at"])
     logger.info("Order #%s successfully cancelled", order.pk)
     return order
 
+
+@transaction.atomic
+def update_order_status(*, order: Order, new_status: str, employee) -> Order:
+    """
+    Update an order to a new status (confirmed, shipped, delivered, cancelled).
+    Requires the order to be locked by the employee's warehouse (unless admin).
+    """
+    locked_order = Order.objects.select_for_update().get(pk=order.pk)
+
+    if not getattr(employee, "is_admin_user", False):
+        profile = getattr(employee, "employee_profile", None)
+        if (
+            not locked_order.locked_by_warehouse_id
+            or not profile
+            or profile.warehouse_id != locked_order.locked_by_warehouse_id
+        ):
+            raise WarehouseAccessDeniedError(
+                f"Order #{locked_order.pk} must be locked by your warehouse before updating its status."
+            )
+        validate_order_warehouse_access(locked_order, employee)
+
+    if new_status == OrderStatus.CANCELLED:
+        return cancel_order(order=locked_order, cancelled_by=employee)
+
+    if locked_order.status == OrderStatus.CANCELLED and new_status == OrderStatus.PENDING:
+        # Check that the order was cancelled by staff / warehouse themselves
+        was_cancelled_by_staff = (
+            locked_order.updated_by is not None
+            and (
+                getattr(locked_order.updated_by, "is_employee", False)
+                or getattr(locked_order.updated_by, "is_admin_user", False)
+            )
+        )
+        if not was_cancelled_by_staff:
+            raise InvalidStatusTransitionError(
+                f"Order #{locked_order.pk} was cancelled by the customer and cannot be reinstated to Pending."
+            )
+
+        # Re-reserve inventory stock for the line items
+        for item in locked_order.items.all():
+            if item.inventory_id:
+                reserve_stock(variant_id=item.variant_id, quantity=item.quantity)
+            else:
+                variant = ProductVariant.objects.select_for_update().get(pk=item.variant_id)
+                if variant.stock < item.quantity:
+                    raise InsufficientStockError(
+                        f"Cannot reinstate Order #{locked_order.pk}: Insufficient stock for {variant.sku} (Available: {variant.stock}, Required: {item.quantity})."
+                    )
+                ProductVariant.objects.filter(pk=variant.pk).update(stock=F("stock") - item.quantity)
+            logger.info(
+                "Re-reserved %s units for variant ID %s on reopened Order #%s",
+                item.quantity,
+                item.variant_id,
+                locked_order.pk,
+            )
+
+    valid_statuses = [choice[0] for choice in OrderStatus.choices]
+    if new_status not in valid_statuses:
+        raise InvalidStatusTransitionError(f"Invalid order status '{new_status}'.")
+
+    # Handle return inventory restoration
+    if new_status == OrderStatus.RETURNED and locked_order.status != OrderStatus.RETURNED:
+        from inventory.services import return_stock
+        for item in locked_order.items.all():
+            if item.inventory_id:
+                try:
+                    return_stock(
+                        inventory_id=item.inventory_id,
+                        quantity=item.quantity,
+                        employee=employee,
+                        reference_id=f"order-returned-{locked_order.pk}",
+                    )
+                except Exception as e:
+                    logger.warning("Could not return stock via inventory service: %s", e)
+            else:
+                ProductVariant.objects.filter(pk=item.variant_id).update(
+                    stock=F("stock") + item.quantity
+                )
+
+    # Sync delivery date on shipment if transitioning to DELIVERED
+    if new_status == OrderStatus.DELIVERED:
+        if hasattr(locked_order, "shipment") and locked_order.shipment:
+            if not locked_order.shipment.delivery_date:
+                locked_order.shipment.delivery_date = timezone.now().date()
+                locked_order.shipment.save(update_fields=["delivery_date", "updated_at"])
+
+    locked_order.status = new_status
+    if employee:
+        locked_order.updated_by = employee
+    locked_order.save(update_fields=["status", "updated_by", "updated_at"])
+    logger.info(
+        "Order #%s transitioned to '%s' by %s", locked_order.pk, new_status, employee
+    )
+    return locked_order

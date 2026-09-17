@@ -1,0 +1,117 @@
+{% load i18n static %}
+<div id="nav-sidebar" class="shopease-domain-sidebar" aria-label="{% translate 'Sidebar' %}">
+  <div class="shopease-sidebar-search-box">
+    <input type="text" id="nav-filter" placeholder="Filter navigation..." aria-label="Filter navigation" />
+  </div>
+
+  <nav class="shopease-nav-domains" id="shopeaseNavTree">
+    <!-- Domain: Catalog -->
+    <div class="shopease-nav-section" data-section="catalog">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Catalog</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:products_product_changelist' %}" class="{% if '/admin/products/product/' in request.path %}active{% endif %}">Products</a></li>
+        <li><a href="{% url 'admin:products_category_changelist' %}" class="{% if '/admin/products/category/' in request.path %}active{% endif %}">Categories</a></li>
+        <li><a href="{% url 'admin:products_brand_changelist' %}" class="{% if '/admin/products/brand/' in request.path %}active{% endif %}">Brands</a></li>
+        <li><a href="{% url 'admin:products_productimage_changelist' %}" class="{% if '/admin/products/productimage/' in request.path %}active{% endif %}">Product Images</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Inventory -->
+    <div class="shopease-nav-section" data-section="inventory">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 18h16"/><path d="M6 18V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M14 9h1"/><path d="M14 13h1"/></svg>
+        <span>Inventory</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:inventory_inventory_changelist' %}" class="{% if '/admin/inventory/inventory/' in request.path %}active{% endif %}">Stock Matrix</a></li>
+        <li><a href="{% url 'admin:inventory_warehouse_changelist' %}" class="{% if '/admin/inventory/warehouse/' in request.path %}active{% endif %}">Warehouses</a></li>
+        <li><a href="{% url 'admin:inventory_stocktransaction_changelist' %}" class="{% if '/admin/inventory/stocktransaction/' in request.path %}active{% endif %}">Audit Ledger</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Orders & Sales -->
+    <div class="shopease-nav-section" data-section="orders">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        <span>Orders & Sales</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:orders_order_changelist' %}" class="{% if '/admin/orders/order/' in request.path and not '/orderitem/' in request.path %}active{% endif %}">Orders</a></li>
+        <li><a href="{% url 'admin:orders_orderitem_changelist' %}" class="{% if '/admin/orders/orderitem/' in request.path %}active{% endif %}">Order Items</a></li>
+        <li><a href="{% url 'admin:orders_payment_changelist' %}" class="{% if '/admin/orders/payment/' in request.path %}active{% endif %}">Payments</a></li>
+        <li><a href="{% url 'admin:orders_invoice_changelist' %}" class="{% if '/admin/orders/invoice/' in request.path %}active{% endif %}">Invoices</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Customers -->
+    <div class="shopease-nav-section" data-section="customers">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Customers</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:users_customer_changelist' %}" class="{% if '/admin/users/customer/' in request.path %}active{% endif %}">Customer Profiles</a></li>
+        <li><a href="{% url 'admin:users_address_changelist' %}" class="{% if '/admin/users/address/' in request.path %}active{% endif %}">Addresses</a></li>
+        <li><a href="{% url 'admin:cart_cart_changelist' %}" class="{% if '/admin/cart/cart/' in request.path %}active{% endif %}">Active Carts</a></li>
+        <li><a href="{% url 'admin:wishlist_wishlist_changelist' %}" class="{% if '/admin/wishlist/wishlist/' in request.path %}active{% endif %}">Wishlists</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Logistics & Fulfillment -->
+    <div class="shopease-nav-section" data-section="fulfillment">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18.5" r="2.5"/><circle cx="7" cy="18.5" r="2.5"/></svg>
+        <span>Fulfillment</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:fulfillment_shipment_changelist' %}" class="{% if '/admin/fulfillment/shipment/' in request.path %}active{% endif %}">Shipments</a></li>
+        <li><a href="{% url 'admin:fulfillment_return_changelist' %}" class="{% if '/admin/fulfillment/return/' in request.path %}active{% endif %}">Returns</a></li>
+        <li><a href="{% url 'admin:fulfillment_exchange_changelist' %}" class="{% if '/admin/fulfillment/exchange/' in request.path %}active{% endif %}">Exchanges</a></li>
+        <li><a href="{% url 'admin:fulfillment_refund_changelist' %}" class="{% if '/admin/fulfillment/refund/' in request.path %}active{% endif %}">Refunds</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Vendors & Procurement -->
+    <div class="shopease-nav-section" data-section="procurement">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+        <span>Procurement</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:vendors_vendor_changelist' %}" class="{% if '/admin/vendors/vendor/' in request.path %}active{% endif %}">Vendors</a></li>
+        <li><a href="{% url 'admin:vendors_purchaseorder_changelist' %}" class="{% if '/admin/vendors/purchaseorder/' in request.path %}active{% endif %}">Purchase Orders</a></li>
+        <li><a href="{% url 'admin:vendors_import_changelist' %}" class="{% if '/admin/vendors/import/' in request.path %}active{% endif %}">Imports</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Marketing & Promotions -->
+    <div class="shopease-nav-section" data-section="marketing">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+        <span>Marketing & Offers</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:promotions_coupon_changelist' %}" class="{% if '/admin/promotions/coupon/' in request.path %}active{% endif %}">Coupons</a></li>
+        <li><a href="{% url 'admin:promotions_offer_changelist' %}" class="{% if '/admin/promotions/offer/' in request.path %}active{% endif %}">Special Deals</a></li>
+        <li><a href="{% url 'admin:reviews_review_changelist' %}" class="{% if '/admin/reviews/review/' in request.path %}active{% endif %}">Customer Reviews</a></li>
+        <li><a href="{% url 'admin:finance_dues_changelist' %}" class="{% if '/admin/finance/dues/' in request.path %}active{% endif %}">Dues Ledger</a></li>
+      </ul>
+    </div>
+
+    <!-- Domain: Auth & Staff -->
+    <div class="shopease-nav-section" data-section="auth">
+      <div class="shopease-section-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Access & Staff</span>
+      </div>
+      <ul class="shopease-section-links">
+        <li><a href="{% url 'admin:users_user_changelist' %}" class="{% if '/admin/users/user/' in request.path and not '/employee/' in request.path and not '/customer/' in request.path and not '/address/' in request.path %}active{% endif %}">System Users</a></li>
+        <li><a href="{% url 'admin:users_employee_changelist' %}" class="{% if '/admin/users/employee/' in request.path %}active{% endif %}">Employees & Roles</a></li>
+        <li><a href="{% url 'admin:auth_group_changelist' %}" class="{% if '/admin/auth/group/' in request.path %}active{% endif %}">Permission Groups</a></li>
+      </ul>
+    </div>
+  </nav>
+</div>

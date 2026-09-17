@@ -26,10 +26,11 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 class ProductVariantSerializer(serializers.ModelSerializer):
     is_in_stock = serializers.BooleanField(read_only=True)
+    product_name = serializers.CharField(source="product.name", read_only=True)
 
     class Meta:
         model = ProductVariant
-        fields = ["id", "sku", "color", "size", "price", "stock", "weight", "status", "is_in_stock"]
+        fields = ["id", "product_name", "sku", "color", "size", "price", "stock", "weight", "status", "is_in_stock"]
         read_only_fields = ["id"]
 
 

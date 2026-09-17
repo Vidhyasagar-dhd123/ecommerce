@@ -93,9 +93,19 @@ def dispatch_order(
     )
 
     for item in order.items.all():
-        if item.inventory_id:
+        inv_to_ship = None
+        if item.inventory and item.inventory.warehouse_id == warehouse.pk:
+            inv_to_ship = item.inventory
+        else:
+            from inventory.models import Inventory
+            inv_to_ship = Inventory.objects.filter(warehouse=warehouse, variant=item.variant).first()
+            if inv_to_ship:
+                item.inventory = inv_to_ship
+                item.save(update_fields=["inventory"])
+
+        if inv_to_ship:
             ship_reserved_stock(
-                inventory_id=item.inventory_id,
+                inventory_id=inv_to_ship.pk,
                 quantity=item.quantity,
                 employee=dispatched_by,
                 reference_id=str(order.pk),

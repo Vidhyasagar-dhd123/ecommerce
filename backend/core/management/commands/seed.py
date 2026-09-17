@@ -324,7 +324,9 @@ EMPLOYEE_DATA = [
     {"username": "emp_ship_blr",     "email": "ship1.blr@store.com",     "first_name": "Ananya",  "last_name": "Rao",     "designation": "ShippingExecutive", "code": "EMP-003", "warehouse_idx": 2},
     {"username": "emp_inv_mumbai",   "email": "inv1.mumbai@store.com",   "first_name": "Neha",    "last_name": "Joshi",   "designation": "InventoryManager",  "code": "EMP-004", "warehouse_idx": 0},
     {"username": "emp_inv_delhi",    "email": "inv1.delhi@store.com",    "first_name": "Kiran",   "last_name": "Gupta",   "designation": "InventoryManager",  "code": "EMP-005", "warehouse_idx": 1},
-    {"username": "emp_support",      "email": "support1@store.com",      "first_name": "Pradeep", "last_name": "Nair",    "designation": "SupportAgent",      "code": "EMP-006", "warehouse_idx": 2},
+    {"username": "emp_support_mumbai", "email": "support1.mumbai@store.com", "first_name": "Pooja", "last_name": "Deshmukh", "designation": "SupportAgent", "code": "EMP-006", "warehouse_idx": 0},
+    {"username": "emp_support_delhi",  "email": "support1.delhi@store.com",  "first_name": "Rohan", "last_name": "Verma",    "designation": "SupportAgent", "code": "EMP-007", "warehouse_idx": 1},
+    {"username": "emp_support",      "email": "support1@store.com",      "first_name": "Pradeep", "last_name": "Nair",    "designation": "SupportAgent",      "code": "EMP-008", "warehouse_idx": 2},
 ]
 
 REVIEW_COMMENTS = [
@@ -401,7 +403,7 @@ class Command(BaseCommand):
             self._seed_carts(customers, variants_map)
 
             self.stdout.write("Seeding orders…")
-            orders = self._seed_orders(customers, variants_map, inventory_map, warehouses, admin)
+            orders = self._seed_orders(customers, variants_map, inventory_map, warehouses, admin, employees=employees)
 
             self.stdout.write("Seeding fulfillment…")
             self._seed_fulfillment(orders, warehouses, admin)
@@ -818,7 +820,7 @@ class Command(BaseCommand):
     #  Orders
     # ─────────────────────────────────────────────────────────────────────────
 
-    def _seed_orders(self, customers, variants_map, inventory_map, warehouses, admin) -> list:
+    def _seed_orders(self, customers, variants_map, inventory_map, warehouses, admin, employees=None) -> list:
         from orders.models import Order, OrderItem, Payment, Invoice
         from orders.models.order import OrderStatus
         from orders.models.payment import PaymentMethod, PaymentStatus
@@ -840,6 +842,13 @@ class Command(BaseCommand):
             OrderStatus.RETURNED,
         ]
         payment_methods = [PaymentMethod.COD, PaymentMethod.UPI, PaymentMethod.NETBANKING, PaymentMethod.CASH]
+
+        # Map warehouse to support agent user
+        support_by_wh = {}
+        if employees:
+            for emp in employees:
+                if getattr(emp, "designation", None) == "SupportAgent" and getattr(emp, "warehouse_id", None):
+                    support_by_wh[emp.warehouse_id] = emp.user
 
         order_counter = 0
         for customer in customers:
@@ -869,6 +878,7 @@ class Command(BaseCommand):
                 grand_total = sub_total + shipping
 
                 wh = random.choice(warehouses) if status not in (OrderStatus.PENDING, OrderStatus.CANCELLED) else None
+                locking_agent = support_by_wh.get(wh.pk if wh else None) or (admin if wh else None)
 
                 order = Order.objects.create(
                     customer=customer,
@@ -877,7 +887,7 @@ class Command(BaseCommand):
                     total_amount=grand_total,
                     coupon_code="",
                     locked_by_warehouse=wh,
-                    locked_by=admin if wh else None,
+                    locked_by=locking_agent,
                     locked_at=timezone.now() if wh else None,
                 )
 

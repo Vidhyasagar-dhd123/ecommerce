@@ -23,14 +23,14 @@ class CategoryListView(generics.ListAPIView):
     """Public: list all active categories."""
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
-    queryset = Category.objects.filter(status=True, is_deleted=False)
+    queryset = Category.objects.filter(status=True, is_deleted=False).order_by("name")
 
 
 class BrandListView(generics.ListAPIView):
     """Public: list all active brands."""
     serializer_class = BrandSerializer
     permission_classes = [AllowAny]
-    queryset = Brand.objects.filter(status=True, is_deleted=False)
+    queryset = Brand.objects.filter(status=True, is_deleted=False).order_by("brand_name")
 
 
 class ProductListView(generics.ListAPIView):
@@ -192,3 +192,12 @@ class VariantDetailView(DomainErrorMixin, generics.RetrieveUpdateDestroyAPIView)
 
     def perform_destroy(self, instance):
         instance.soft_delete()
+
+
+class AllVariantsListView(generics.ListAPIView):
+    """Public/Staff: list all product variants with product names for stock selection."""
+    serializer_class = ProductVariantSerializer
+    permission_classes = [AllowAny]
+    queryset = ProductVariant.objects.select_related("product").filter(is_deleted=False).order_by("sku")
+    pagination_class = None
+

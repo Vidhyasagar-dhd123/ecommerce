@@ -15,6 +15,8 @@ class StockTransactionType(models.TextChoices):
     SALE = "sale", "Sale"
     RETURN = "return", "Return"
     ADJUSTMENT = "adjustment", "Adjustment"
+    TRANSFER_OUT = "transfer_out", "Transfer Out"
+    TRANSFER_IN = "transfer_in", "Transfer In"
 
 
 class StockTransaction(BaseModel):

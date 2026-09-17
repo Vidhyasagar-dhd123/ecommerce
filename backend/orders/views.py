@@ -48,9 +48,23 @@ class OrderListView(DomainErrorMixin, generics.ListAPIView):
         user = self.request.user
         if user.is_admin_user:
             return Order.objects.with_relations()
+        if user.is_shipping_executive:
+            warehouse_id = getattr(getattr(user, "employee_profile", None), "warehouse_id", None)
+            if not warehouse_id:
+                return Order.objects.none()
+            return (
+                Order.objects.filter(
+                    locked_by_warehouse_id=warehouse_id,
+                    locked_by__isnull=False,
+                )
+                .filter(
+                    models.Q(locked_by__groups__name="SupportAgent")
+                    | models.Q(locked_by__employee_profile__designation="SupportAgent")
+                )
+                .with_relations()
+            )
         if (
             user.is_support_agent
-            or user.is_shipping_executive
             or user.is_inventory_manager
             or user.is_employee
         ):
@@ -85,6 +99,20 @@ class OrderDetailView(DomainErrorMixin, generics.RetrieveAPIView):
                 self.permission_denied(self.request, message="You do not have permission to view this order.")
         elif not user.is_admin_user:
             validate_order_warehouse_access(order, user)
+            if user.is_shipping_executive:
+                warehouse_id = getattr(getattr(user, "employee_profile", None), "warehouse_id", None)
+                is_support_agent_locked = (
+                    order.locked_by
+                    and (
+                        order.locked_by.groups.filter(name="SupportAgent").exists()
+                        or getattr(getattr(order.locked_by, "employee_profile", None), "designation", None) == "SupportAgent"
+                    )
+                )
+                if not is_support_agent_locked or order.locked_by_warehouse_id != warehouse_id:
+                    self.permission_denied(
+                        self.request,
+                        message="Shipping executives can only view orders locked by a Support Agent of their assigned warehouse.",
+                    )
         return order
 
 
@@ -147,21 +175,74 @@ class CreateOrderView(DomainErrorMixin, generics.CreateAPIView):
         return Response(OrderDetailSerializer(order).data, status=status.HTTP_201_CREATED)
 
 
-class CancelOrderView(DomainErrorMixin, generics.GenericAPIView):
+from .services import (
+    create_order_from_cart,
+    confirm_order,
+    cancel_order,
+    update_order_status,
+    lock_order,
+    unlock_order,
+    validate_order_warehouse_access,
+)
+
+
+class ConfirmOrderView(DomainErrorMixin, generics.GenericAPIView):
     """
-    POST /api/v1/orders/<id>/cancel/
-    Cancel an order and release reserved inventory back into stock.
+    POST /api/v1/orders/<id>/confirm/
+    Staff confirms an incoming pending order.
     """
 
-    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+    permission_classes = [
+        IsAuthenticated,
+        IsInventoryManager | IsSupportAgent | IsShippingExecutive | IsAdminUser,
+    ]
     queryset = Order.objects.all()
 
     def post(self, request, pk, *args, **kwargs):
         order = self.get_object()
-        self.check_object_permissions(request, order)
+        confirmed_order = confirm_order(order=order, confirmed_by=request.user)
+        return Response(OrderDetailSerializer(confirmed_order, context={"request": request}).data, status=status.HTTP_200_OK)
 
+
+class UpdateOrderStatusView(DomainErrorMixin, generics.GenericAPIView):
+    """
+    POST /api/v1/orders/<id>/status/
+    Update order status (confirmed, shipped, delivered, cancelled).
+    Requires the order to be locked by the staff's warehouse.
+    """
+
+    permission_classes = [
+        IsAuthenticated,
+        IsInventoryManager | IsSupportAgent | IsShippingExecutive | IsAdminUser,
+    ]
+    queryset = Order.objects.all()
+
+    def post(self, request, pk, *args, **kwargs):
+        order = self.get_object()
+        new_status = request.data.get("status")
+        if not new_status:
+            return Response({"detail": "Field 'status' is required."}, status=status.HTTP_400_BAD_REQUEST)
+        updated_order = update_order_status(order=order, new_status=new_status, employee=request.user)
+        return Response(OrderDetailSerializer(updated_order, context={"request": request}).data, status=status.HTTP_200_OK)
+
+
+class CancelOrderView(DomainErrorMixin, generics.GenericAPIView):
+    """
+    POST /api/v1/orders/<id>/cancel/
+    Cancel an order and release reserved inventory back into stock.
+    Requires order to be locked by the staff's warehouse.
+    """
+
+    permission_classes = [
+        IsAuthenticated,
+        IsOwnerOrAdmin | IsSupportAgent | IsInventoryManager | IsAdminUser,
+    ]
+    queryset = Order.objects.all()
+
+    def post(self, request, pk, *args, **kwargs):
+        order = self.get_object()
         cancelled_order = cancel_order(order=order, cancelled_by=request.user)
-        return Response(OrderDetailSerializer(cancelled_order).data, status=status.HTTP_200_OK)
+        return Response(OrderDetailSerializer(cancelled_order, context={"request": request}).data, status=status.HTTP_200_OK)
 
 
 class AdminOrderListView(DomainErrorMixin, generics.ListAPIView):
