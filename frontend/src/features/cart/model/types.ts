@@ -34,12 +34,26 @@ export const CartSchema = z.object({
 });
 export type Cart = z.infer<typeof CartSchema>;
 
-// ── Coupon Validation ─────────────────────────────────────
+// ── Coupon ────────────────────────────────────────────────
+export const CouponSchema = z.object({
+  id: z.number().optional(),
+  code: z.string(),
+  discount_type: z.enum(['percent', 'fixed']),
+  discount_value: z.union([z.string(), z.number()]),
+  min_order_amount: z.union([z.string(), z.number()]).optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  status: z.boolean().optional(),
+  is_valid: z.boolean().optional(),
+});
+export type Coupon = z.infer<typeof CouponSchema>;
+
 export const CouponValidationSchema = z.object({
   valid: z.boolean(),
   code: z.string(),
   discount_type: z.enum(['percent', 'fixed']),
   discount_value: z.string(),
   message: z.string().optional(),
+  coupon: CouponSchema.optional(),
 });
 export type CouponValidation = z.infer<typeof CouponValidationSchema>;

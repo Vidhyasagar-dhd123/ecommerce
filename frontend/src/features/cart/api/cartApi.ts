@@ -30,5 +30,15 @@ export const clearCart = async () => {
 
 export const validateCoupon = async (code: string) => {
   const res = await axiosInstance.post('/api/v1/promotions/coupons/validate/', { code });
-  return CouponValidationSchema.parse(unwrap(res));
+  const raw = unwrap<any>(res);
+  const couponData = raw?.coupon ?? raw;
+
+  return CouponValidationSchema.parse({
+    valid: Boolean(couponData?.is_valid ?? true),
+    code: String(couponData?.code ?? code),
+    discount_type: couponData?.discount_type,
+    discount_value: String(couponData?.discount_value ?? '0'),
+    message: raw?.message,
+    coupon: couponData,
+  });
 };

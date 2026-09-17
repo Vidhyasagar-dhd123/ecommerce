@@ -1,8 +1,7 @@
-import { useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { Minus, Plus, Trash2, ShoppingBag, Tag, X, ArrowRight } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
+import { Trash2, ShoppingBag, Tag, ArrowRight, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import {
@@ -11,76 +10,9 @@ import {
 import { validateCoupon } from '../api/cartApi';
 import { useUIStore } from '@/shared/store/uiStore';
 import { formatCurrency } from '@utils/formatCurrency';
-import type { CartItem as CartItemType } from '../model/types';
+import { getApiErrorMessage } from '@utils/apiHelpers';
+import { CartItemRow } from '../components/CartItemRow';
 
-// ── Cart Item Row ─────────────────────────────────────────
-function CartItemRow({
-  item, onQuantityChange, onRemove, isUpdating,
-}: {
-  item: CartItemType;
-  onQuantityChange: (id: number, qty: number) => void;
-  onRemove: (id: number) => void;
-  isUpdating: boolean;
-}) {
-  const image = item.variant_details.product.images.find((i) => i.is_primary) ?? item.variant_details.product.images[0];
-
-  return (
-    <li className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-4">
-      <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50">
-        {image ? (
-          <img src={image.image_url} alt={item.variant_details.product.name} width={80} height={80} className="h-full w-full object-cover" />
-        ) : (
-          <div className="h-full w-full bg-gray-200" />
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col justify-between">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <Link to={`/products/${item.variant_details.product.slug}`} className="text-sm font-semibold text-gray-800 hover:text-blue-600">
-              {item.variant_details.product.name}
-            </Link>
-            <p className="text-xs text-gray-400">{item.variant_details.color} / {item.variant_details.size}</p>
-          </div>
-          <button
-            onClick={() => onRemove(item.id)}
-            aria-label={`Remove ${item.variant_details.product.name} from cart`}
-            className="text-gray-300 transition hover:text-red-500"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between">
-          {/* Quantity stepper */}
-          <div className="flex items-center gap-1 rounded-lg border">
-            <button
-              aria-label="Decrease quantity"
-              onClick={() => onQuantityChange(item.id, item.quantity - 1)}
-              disabled={item.quantity <= 1 || isUpdating}
-              className="px-2.5 py-1.5 text-gray-500 hover:bg-gray-50 disabled:opacity-40"
-            >
-              <Minus className="h-3 w-3" />
-            </button>
-            <span className="min-w-[1.5rem] text-center text-sm font-semibold">{item.quantity}</span>
-            <button
-              aria-label="Increase quantity"
-              onClick={() => onQuantityChange(item.id, item.quantity + 1)}
-              disabled={item.quantity >= item.variant_details.stock || isUpdating}
-              className="px-2.5 py-1.5 text-gray-500 hover:bg-gray-50 disabled:opacity-40"
-            >
-              <Plus className="h-3 w-3" />
-            </button>
-          </div>
-
-          <p className="text-sm font-bold text-blue-600">
-            {formatCurrency(Number(item.price) * item.quantity)}
-          </p>
-        </div>
-      </div>
-    </li>
-  );
-}
 
 // ── Main Page ─────────────────────────────────────────────
 export default function CartPage() {
@@ -117,7 +49,7 @@ export default function CartPage() {
         toast.error(data.message ?? 'Invalid coupon');
       }
     },
-    onError: () => toast.error('Failed to validate coupon'),
+    onError: (err) => toast.error(getApiErrorMessage(err)),
   });
 
   // ── Derived ───────────────────────────────────────────────

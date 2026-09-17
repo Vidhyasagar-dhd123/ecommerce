@@ -90,7 +90,7 @@ export default function WishlistPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {wishlistProducts.map((product) => {
-              const image = product.images.find((i) => i.is_primary) ?? product.images[0];
+              const image = product.images?.find((i) => i.is_primary) ?? product.images?.[0];
               return (
                 <div key={product.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
                   <Link to={`/products/${product.slug}`}>

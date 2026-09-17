@@ -6,6 +6,7 @@ import { Login } from '@/pages/Login/Login';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { getDashboardRoute } from '@/features/auth/utils/roleGuards';
 import { DashboardSkeleton } from '@/pages/Dashboards/DashboardSkeleton';
+import { Layout } from '@/shared/components/layout/Layout';
 
 // ── Code-split all pages ──────────────────────────────────
 const ProductsPage       = lazy(() => import('@/pages/Products/ProductsPage'));
@@ -23,6 +24,26 @@ const PromotionsPage     = lazy(() => import('@features/promotions/pages/Promoti
 const WishlistPage       = lazy(() => import('@features/wishlist/pages/WishlistPage'));
 const ProfilePage        = lazy(() => import('@features/profile/pages/ProfilePage'));
 const AddressPage        = lazy(() => import('@features/profile/pages/AddressPage'));
+const AdminDashboardPage = lazy(() =>
+  import('@features/dashboard/pages/AdminDashboardPage').then((m) => ({
+    default: m.AdminDashboardPage,
+  }))
+);
+const SupportAgentDashboardPage = lazy(() =>
+  import('@features/dashboard/pages/SupportAgentDashboardPage').then((m) => ({
+    default: m.SupportAgentDashboardPage,
+  }))
+);
+const ShippingExecutiveDashboardPage = lazy(() =>
+  import('@features/dashboard/pages/ShippingExecutiveDashboardPage').then((m) => ({
+    default: m.ShippingExecutiveDashboardPage,
+  }))
+);
+const InventoryManagerDashboardPage = lazy(() =>
+  import('@features/dashboard/pages/InventoryManagerDashboardPage').then((m) => ({
+    default: m.InventoryManagerDashboardPage,
+  }))
+);
 
 // ── Spinner shown during route lazy-load ─────────────────
 function PageSpinner() {
@@ -51,21 +72,18 @@ export const AppRoutes = () => {
         <Route path="/" element={<RootRedirect />} />
         <Route path="/login" element={<Login />} />
 
-        {/* ── Admin Dashboard Skeleton ────────────────────────── */}
+        {/* ── Admin Dashboard ────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route
-            path="/admin/dashboard"
-            element={
-              <DashboardSkeleton
-                title="System Admin Dashboard"
-                roleBadge="System Admin"
-                description="Manage users, employees, system logs, and global configuration."
-              />
-            }
-          />
+          <Route element={<Layout />}>
+            <Route
+              path="/admin/dashboard"
+              element={<AdminDashboardPage />}
+            />
+          </Route>
         </Route>
 
-        {/* ── Inventory Manager Dashboard Skeleton ───────────── */}
+
+        {/* ── Inventory Manager Dashboard ─────────────────────── */}
         <Route
           element={
             <ProtectedRoute
@@ -74,19 +92,15 @@ export const AppRoutes = () => {
             />
           }
         >
-          <Route
-            path="/inventory/dashboard"
-            element={
-              <DashboardSkeleton
-                title="Inventory Manager Dashboard"
-                roleBadge="Inventory Manager"
-                description="Manage warehouses, stock movements, products, and inventory audits."
-              />
-            }
-          />
+          <Route element={<Layout />}>
+            <Route
+              path="/inventory/dashboard"
+              element={<InventoryManagerDashboardPage />}
+            />
+          </Route>
         </Route>
 
-        {/* ── Support Agent Dashboard Skeleton ───────────────── */}
+        {/* ── Support Agent Dashboard ────────────────────────── */}
         <Route
           element={
             <ProtectedRoute
@@ -95,19 +109,15 @@ export const AppRoutes = () => {
             />
           }
         >
-          <Route
-            path="/support/dashboard"
-            element={
-              <DashboardSkeleton
-                title="Support Agent Dashboard"
-                roleBadge="Support Agent"
-                description="Manage customer returns, exchange requests, ticket resolution, and support inquiries."
-              />
-            }
-          />
+          <Route element={<Layout />}>
+            <Route
+              path="/support/dashboard"
+              element={<SupportAgentDashboardPage />}
+            />
+          </Route>
         </Route>
 
-        {/* ── Shipping Executive Dashboard Skeleton ──────────── */}
+        {/* ── Shipping Executive Dashboard ──────────────────── */}
         <Route
           element={
             <ProtectedRoute
@@ -116,35 +126,34 @@ export const AppRoutes = () => {
             />
           }
         >
-          <Route
-            path="/shipping/dashboard"
-            element={
-              <DashboardSkeleton
-                title="Shipping Executive Dashboard"
-                roleBadge="Shipping Executive"
-                description="Manage order fulfillment, shipments, dispatches, and delivery status tracking."
-              />
-            }
-          />
+          <Route element={<Layout />}>
+            <Route
+              path="/shipping/dashboard"
+              element={<ShippingExecutiveDashboardPage />}
+            />
+          </Route>
         </Route>
 
         {/* ── Customer Protected Routes ───────────────────────── */}
+        {/* Layout route: renders Navbar once; child pages fill the <Outlet /> */}
         <Route element={<ProtectedRoute allowedRoles={['customer', 'admin']} />}>
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:slug" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/orders" element={<OrderListPage />} />
-          <Route path="/orders/:id" element={<OrderDetailPage />} />
-          <Route path="/orders/:id/track" element={<OrderTrackPage />} />
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/invoices/:orderId" element={<InvoicePage />} />
-          <Route path="/orders/:id/return" element={<RequestReturnPage />} />
-          <Route path="/dues" element={<DuesPage />} />
-          <Route path="/promotions" element={<PromotionsPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/addresses" element={<AddressPage />} />
+          <Route element={<Layout />}>
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/orders" element={<OrderListPage />} />
+            <Route path="/orders/:id" element={<OrderDetailPage />} />
+            <Route path="/orders/:id/track" element={<OrderTrackPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/invoices/:orderId" element={<InvoicePage />} />
+            <Route path="/orders/:id/return" element={<RequestReturnPage />} />
+            <Route path="/dues" element={<DuesPage />} />
+            <Route path="/promotions" element={<PromotionsPage />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/addresses" element={<AddressPage />} />
+          </Route>
         </Route>
 
         {/* Fallback */}

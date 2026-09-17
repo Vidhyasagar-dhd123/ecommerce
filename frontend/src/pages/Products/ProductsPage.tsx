@@ -1,6 +1,6 @@
 import { useCallback, useMemo, memo } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { Search, SlidersHorizontal, Heart, ShoppingCart, X } from 'lucide-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Search, SlidersHorizontal, Heart, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
 import { useDebounce } from '@/shared/hooks/useDebounce';
@@ -11,18 +11,21 @@ import { productKeys } from '@features/products/hooks/useProducts';
 import { formatCurrency } from '@utils/formatCurrency';
 import type { ProductList } from '@features/products/model/types';
 
+import { useToggleWishlist } from '@features/orders/hooks/useOrders';
+
 // ── Product Card ──────────────────────────────────────────
 const ProductCard = memo(function ProductCard({ product }: { product: ProductList }) {
   const navigate = useNavigate();
-  const { wishlistIds, addToWishlist, removeFromWishlist } = useUIStore();
+  const { wishlistIds } = useUIStore();
+  const toggleWishlistMutation = useToggleWishlist();
   const isWishlisted = wishlistIds.has(product.id);
 
   const handleWishlist = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      isWishlisted ? removeFromWishlist(product.id) : addToWishlist(product.id);
+      toggleWishlistMutation.mutate({ productId: product.id, inWishlist: isWishlisted });
     },
-    [isWishlisted, product.id, addToWishlist, removeFromWishlist],
+    [isWishlisted, product.id, toggleWishlistMutation],
   );
 
   return (
@@ -111,7 +114,6 @@ function Pagination({ count, page, pageSize, onPageChange }: {
 export default function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { page, setPage } = usePagination(12);
-  const cartCount = useUIStore((s) => s.cartCount);
 
   const searchInput = searchParams.get('search') ?? '';
   const selectedCategory = searchParams.get('category') ?? '';
@@ -148,6 +150,22 @@ export default function ProductsPage() {
     [categories],
   );
 
+  const selectedCatObj = useMemo(
+    () => (categories ?? []).find((c) => String(c.id) === selectedCategory),
+    [categories, selectedCategory],
+  );
+
+  const activeRootCategory = useMemo(() => {
+    if (!selectedCatObj) return null;
+    if (selectedCatObj.parent === null) return selectedCatObj;
+    return (categories ?? []).find((c) => c.id === selectedCatObj.parent) ?? null;
+  }, [selectedCatObj, categories]);
+
+  const subCategories = useMemo(() => {
+    if (!activeRootCategory) return [];
+    return (categories ?? []).filter((c) => c.parent === activeRootCategory.id);
+  }, [activeRootCategory, categories]);
+
   const activeFiltersCount = useMemo(
     () => [selectedCategory, selectedBrand, debouncedSearch].filter(Boolean).length,
     [selectedCategory, selectedBrand, debouncedSearch],
@@ -169,63 +187,98 @@ export default function ProductsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-2 text-lg font-bold text-gray-800">
-            <ShoppingCart className="h-6 w-6 text-blue-600" /> ShopEase
-          </Link>
-          <div className="relative flex-1 max-w-2xl">
+    <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
+      {/* Main Category Pills Bar */}
+      <div className="border-b bg-white" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="mx-auto max-w-7xl px-4 py-2.5 sm:px-6 lg:px-8">
+          <nav aria-label="Category filters" className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button
+              onClick={() => setParam('category', '')}
+              className={`whitespace-nowrap rounded-full px-3.5 py-1 text-xs font-medium transition ${
+                !selectedCategory
+                  ? 'text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              style={{
+                background: !selectedCategory ? 'var(--color-primary)' : undefined,
+              }}
+            >
+              All Categories
+            </button>
+            {rootCategories.map((c) => {
+              const isRootActive = activeRootCategory?.id === c.id;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setParam('category', String(c.id))}
+                  className={`whitespace-nowrap rounded-full px-3.5 py-1 text-xs font-medium transition ${
+                    isRootActive
+                      ? 'text-white font-semibold'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  style={{
+                    background: isRootActive ? 'var(--color-primary)' : undefined,
+                  }}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+
+      {/* Subcategory Pills Bar (if a category is active) */}
+      {subCategories.length > 0 && activeRootCategory && (
+        <div className="border-b bg-gray-50/80" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+            <nav aria-label="Subcategory filters" className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none">
+              <span className="text-xs font-semibold text-gray-500 shrink-0">{activeRootCategory.name}:</span>
+              <button
+                onClick={() => setParam('category', String(activeRootCategory.id))}
+                className={`whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+                  selectedCategory === String(activeRootCategory.id)
+                    ? 'bg-blue-100 text-blue-700 font-semibold'
+                    : 'text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                All {activeRootCategory.name}
+              </button>
+              {subCategories.map((sub) => (
+                <button
+                  key={sub.id}
+                  onClick={() => setParam('category', String(sub.id))}
+                  className={`whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+                    selectedCategory === String(sub.id)
+                      ? 'bg-blue-100 text-blue-700 font-semibold'
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {sub.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        {/* Mobile Search fallback */}
+        <div className="sm:hidden mb-4">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
-              id="product-search"
+              id="product-search-mobile"
               type="search"
               value={searchInput}
               onChange={handleSearchChange}
               placeholder="Search products…"
               aria-label="Search products"
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:bg-white focus:outline-none"
+              className="w-full rounded-xl border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
-          <Link to="/cart" className="relative p-2" aria-label={`Cart — ${cartCount} items`}>
-            <ShoppingCart className="h-6 w-6 text-gray-600" />
-            {cartCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
-                {cartCount}
-              </span>
-            )}
-          </Link>
-          <Link to="/wishlist" aria-label="Wishlist"><Heart className="h-6 w-6 text-gray-600" /></Link>
-          <Link
-            to="/profile"
-            aria-label="Profile"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600"
-          >
-            P
-          </Link>
         </div>
 
-        {/* Category pills */}
-        <nav aria-label="Category filters" className="flex gap-2 overflow-x-auto px-4 pb-3 sm:px-6 lg:px-8">
-          <button
-            onClick={() => setParam('category', '')}
-            className={`whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition ${!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-          >
-            All
-          </button>
-          {rootCategories.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setParam('category', String(c.id))}
-              className={`whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition ${selectedCategory === String(c.id) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >
-              {c.name}
-            </button>
-          ))}
-        </nav>
-      </header>
-
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="h-4 w-4 text-gray-500" />
@@ -233,19 +286,19 @@ export default function ProductsPage() {
             {activeFiltersCount > 0 && (
               <button
                 onClick={clearFilters}
-                className="flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs text-red-600 hover:bg-red-100"
+                className="flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-600 hover:bg-red-100"
               >
                 <X className="h-3 w-3" /> Clear ({activeFiltersCount})
               </button>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <label htmlFor="brand-filter" className="text-xs text-gray-500">Brand</label>
+            <label htmlFor="brand-filter" className="text-xs text-gray-500 font-medium">Brand</label>
             <select
               id="brand-filter"
               value={selectedBrand}
               onChange={(e) => setParam('brand', e.target.value)}
-              className="rounded-lg border border-gray-200 py-1.5 pl-2 pr-6 text-xs focus:outline-none"
+              className="rounded-lg border border-gray-200 bg-white py-1.5 pl-2 pr-6 text-xs focus:border-blue-500 focus:outline-none"
             >
               <option value="">All brands</option>
               {(brands ?? []).map((b) => (

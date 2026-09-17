@@ -14,6 +14,7 @@ import { AuthContext } from '@/features/auth/contexts/AuthContext';
 import type { AuthTokens, AuthUser, JwtPayload } from '@/features/auth/model/types';
 import { tokenStorage } from '@/features/auth/utils/tokenStorage';
 import { getDashboardRoute } from '@/features/auth/utils/roleGuards';
+import { queryClient } from '@lib/queryClient';
 
 const decodePayload = (token: string): JwtPayload | null => {
   try {
@@ -160,6 +161,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await logoutRequest();
     } finally {
       tokenStorage.clear();
+      queryClient.clear();
       setUser(null);
       navigate('/login', { replace: true });
     }

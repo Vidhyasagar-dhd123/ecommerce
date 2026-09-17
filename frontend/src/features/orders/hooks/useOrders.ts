@@ -9,6 +9,7 @@ import {
   fetchMe, updateUser, updateProfile,
 } from '../api/ordersApi';
 import { getApiErrorMessage } from '@utils/apiHelpers';
+import { useUIStore } from '@/shared/store/uiStore';
 import type { OrderStatus } from '../model/types';
 
 // ── Query Key Factory ─────────────────────────────────────
@@ -161,18 +162,43 @@ export function useOffers() {
   });
 }
 
-// ── Wishlist ──────────────────────────────────────────────
-export function useWishlist() {
-  return useQuery({ queryKey: orderKeys.wishlist, queryFn: fetchWishlist });
+export function useWishlist(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: orderKeys.wishlist,
+    queryFn: fetchWishlist,
+    enabled: options?.enabled ?? true,
+  });
 }
 
 export function useToggleWishlist() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ productId, inWishlist }: { productId: number; inWishlist: boolean }) =>
-      inWishlist ? removeFromWishlist(productId) : addToWishlist(productId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: orderKeys.wishlist }),
-    onError: (err) => toast.error(getApiErrorMessage(err)),
+    mutationFn: async ({ productId, inWishlist }: { productId: number; inWishlist: boolean }) => {
+      if (inWishlist) {
+        await removeFromWishlist(productId);
+      } else {
+        await addToWishlist(productId);
+      }
+    },
+    onMutate: async ({ productId, inWishlist }) => {
+      if (inWishlist) {
+        useUIStore.getState().removeFromWishlist(productId);
+      } else {
+        useUIStore.getState().addToWishlist(productId);
+      }
+    },
+    onSuccess: (_, { inWishlist }) => {
+      void queryClient.invalidateQueries({ queryKey: orderKeys.wishlist });
+      toast.success(inWishlist ? 'Removed from wishlist' : 'Added to wishlist!');
+    },
+    onError: (err, { productId, inWishlist }) => {
+      if (inWishlist) {
+        useUIStore.getState().addToWishlist(productId);
+      } else {
+        useUIStore.getState().removeFromWishlist(productId);
+      }
+      toast.error(getApiErrorMessage(err));
+    },
   });
 }
 

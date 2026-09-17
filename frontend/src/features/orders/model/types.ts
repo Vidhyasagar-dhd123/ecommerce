@@ -62,12 +62,16 @@ export const OrderItemSchema = z
         size: z.string().nullable().optional(),
         price: z.union([z.string(), z.number()]).optional(),
         product: z
-          .object({
-            id: z.number().optional(),
-            name: z.string().optional(),
-            slug: z.string().optional(),
-          })
-          .passthrough()
+          .union([
+            z.number(),
+            z
+              .object({
+                id: z.number().optional(),
+                name: z.string().optional(),
+                slug: z.string().optional(),
+              })
+              .passthrough(),
+          ])
           .optional()
           .nullable(),
         product_name: z.string().optional(),
